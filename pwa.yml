@@ -22,9 +22,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
 
-      - run: npm ci
+      - run: npm install
 
       # Si los tests fallan no se despliega. El motor de horarios no sale
       # a la calle sin pasar por aquí.
