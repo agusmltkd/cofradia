@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14161C">
+<title>Itinerario</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --noche:#14161C; --superficie:#1D2029; --superficie-2:#252935;
+  --linea:#2E3340; --cera:#E8C77A; --bronce:#8A7A5C;
+  --texto:#E6E4DE; --texto-2:#9A9890; --texto-3:#6B6A65;
+  --alarma:#D4614F; --ok:#6E9C7E;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--noche);color:var(--texto);font-family:var(--sans);
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  padding:env(safe-area-inset-top) 0 calc(24px + env(safe-area-inset-bottom));
+}
+.envoltorio{max-width:560px;margin:0 auto;padding:0 16px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--texto-3)}
+
+header{padding:20px 0 16px;border-bottom:1px solid var(--linea)}
+.selectores{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+select{
+  flex:1;min-width:120px;background:var(--superficie);color:var(--texto);
+  border:1px solid var(--linea);border-radius:6px;padding:9px 10px;
+  font-family:var(--sans);font-size:15px;appearance:none;
+}
+select:focus-visible,button:focus-visible,input:focus-visible{
+  outline:2px solid var(--cera);outline-offset:2px}
+
+section{padding:20px 0;border-bottom:1px solid var(--linea)}
+
+.retraso{display:flex;align-items:center;gap:14px;margin-top:12px}
+.retraso button{
+  width:52px;height:52px;flex:none;background:var(--superficie);
+  border:1px solid var(--linea);border-radius:8px;color:var(--texto);
+  font-size:26px;font-family:var(--mono);cursor:pointer}
+.retraso button:active{background:var(--superficie-2)}
+.retraso .valor{flex:1;text-align:center;font-family:var(--mono)}
+.retraso .valor b{display:block;font-size:44px;font-weight:400;
+  line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.retraso .valor span{font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--texto-3)}
+
+/* Regleta: la línea de tiempo de salida a Campana.
+   Cada segmento claro es un parón; se ve cómo el retraso se los come. */
+.regleta{margin-top:18px}
+.barra{display:flex;height:34px;gap:1px;border-radius:5px;overflow:hidden;
+  background:var(--linea)}
+.barra i{display:block;transition:flex-grow .35s ease}
+.barra .andar{background:var(--superficie-2)}
+.barra .paron{background:var(--cera);opacity:.85}
+.barra .comido{background:var(--superficie);opacity:.35}
+.ancla{display:flex;justify-content:space-between;margin-top:6px}
+
+.metricas{display:flex;gap:8px;margin-top:16px}
+.metrica{flex:1;background:var(--superficie);border:1px solid var(--linea);
+  border-radius:8px;padding:10px 12px}
+.metrica b{display:block;font-family:var(--mono);font-size:22px;font-weight:400;
+  font-variant-numeric:tabular-nums;margin-top:2px}
+
+.banda{border-radius:8px;padding:12px 14px;margin-top:16px;font-size:14px;
+  border:1px solid}
+.banda.ok{border-color:rgba(110,156,126,.4);background:rgba(110,156,126,.1);
+  color:var(--ok)}
+.banda.mal{border-color:rgba(212,97,79,.45);background:rgba(212,97,79,.12);
+  color:var(--alarma)}
+.banda ul{margin:6px 0 0 16px}
+.banda li{margin-top:3px}
+
+#vivo{
+  width:100%;padding:22px;border-radius:12px;border:1px solid var(--linea);
+  background:var(--superficie);color:var(--texto);font-family:var(--sans);
+  font-size:17px;cursor:pointer;display:block}
+#vivo[data-activo="1"]{border-color:var(--cera);color:var(--cera)}
+
+.tarjeta{margin-top:16px;background:var(--superficie);border:1px solid var(--linea);
+  border-radius:12px;padding:22px;text-align:center}
+.tarjeta .cifra{font-family:var(--mono);font-size:76px;line-height:.9;
+  font-variant-numeric:tabular-nums;letter-spacing:-.03em;color:var(--cera)}
+.tarjeta .destino{font-size:19px;margin-top:14px;text-wrap:balance}
+.tarjeta .reloj{font-family:var(--mono);font-size:13px;color:var(--texto-3);
+  margin-top:10px;font-variant-numeric:tabular-nums}
+
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+th{text-align:left;font-weight:400;font-family:var(--mono);font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--texto-3);
+  padding-bottom:8px;border-bottom:1px solid var(--linea)}
+td{padding:9px 0;border-bottom:1px solid var(--linea);vertical-align:top}
+td.hora{font-family:var(--mono);font-variant-numeric:tabular-nums;
+  white-space:nowrap;width:1%;padding-right:14px}
+td.delta{font-family:var(--mono);text-align:right;color:var(--texto-3);
+  font-variant-numeric:tabular-nums;white-space:nowrap;width:1%}
+tr.es-ancla td{color:var(--cera)}
+tr.es-ancla td.hora{font-weight:500}
+tr.pasado td{opacity:.4}
+.tachado{color:var(--texto-3);text-decoration:line-through;margin-right:7px}
+
+.pie{padding:18px 0;color:var(--texto-3);font-size:13px}
+.pie label{display:flex;align-items:center;gap:8px;margin-top:10px}
+.pie input{background:var(--superficie);border:1px solid var(--linea);
+  border-radius:6px;color:var(--texto);padding:6px 8px;font-family:var(--mono)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="envoltorio">
+
+<header>
+  <p class="eyebrow" id="hermandad">cargando</p>
+  <div class="selectores">
+    <select id="plan" aria-label="Plan"></select>
+    <select id="seccion" aria-label="Sección"></select>
+  </div>
+</header>
+
+<section>
+  <p class="eyebrow">Retraso en la salida</p>
+  <div class="retraso">
+    <button type="button" id="menos" aria-label="Quitar cinco minutos">−</button>
+    <div class="valor"><b id="retrasoValor">0</b><span>minutos</span></div>
+    <button type="button" id="mas" aria-label="Añadir cinco minutos">+</button>
+  </div>
+
+  <div class="regleta">
+    <div class="barra" id="barra" role="img"
+         aria-label="Reparto del tiempo entre andar y parar hasta el punto fijo"></div>
+    <div class="ancla">
+      <span class="eyebrow" id="anclaSalida">salida</span>
+      <span class="eyebrow" id="anclaNombre">punto fijo</span>
+    </div>
+  </div>
+
+  <div class="metricas">
+    <div class="metrica"><span class="eyebrow">Margen</span><b id="margen">–</b></div>
+    <div class="metrica"><span class="eyebrow">Máximo</span><b id="maximo">–</b></div>
+    <div class="metrica"><span class="eyebrow">Andar</span><b id="acel">–</b></div>
+  </div>
+
+  <div id="estado"></div>
+</section>
+
+<section>
+  <button type="button" id="vivo" data-activo="0">Empezar modo en vivo</button>
+  <div class="tarjeta" id="tarjeta" hidden>
+    <div class="cifra" id="cifra">–</div>
+    <div class="destino" id="destino"></div>
+    <div class="reloj" id="reloj"></div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Horario</p>
+  <table>
+    <thead><tr><th>Hora</th><th>Punto</th><th style="text-align:right">Δ</th></tr></thead>
+    <tbody id="tabla"></tbody>
+  </table>
+</section>
+
+<div class="pie">
+  <p>Con el modo en vivo activo, el botón de los auriculares canta el
+     siguiente punto. Deja la app abierta y no cierres la notificación.</p>
+  <label>Simular hora
+    <input type="time" id="horaSim">
+    <button type="button" id="limpiarHora"
+      style="background:none;border:0;color:var(--cera);cursor:pointer">usar la real</button>
+  </label>
+</div>
+
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

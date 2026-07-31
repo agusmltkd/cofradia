@@ -1,0 +1,55 @@
+name: PWA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # Si los tests fallan no se despliega. El motor de horarios no sale
+      # a la calle sin pasar por aquí.
+      - run: npm test
+
+      - run: npm run build
+
+      # Versiona el service worker con el hash del contenido, para que
+      # nadie se quede con una versión vieja cacheada.
+      - name: Versionar service worker
+        run: |
+          HASH=$(find pwa -type f ! -name sw.js | sort | xargs sha256sum | sha256sum | cut -c1-10)
+          sed -i "s/const CACHE_NAME = '.*';/const CACHE_NAME = 'itinerario-$HASH';/" pwa/sw.js
+          grep CACHE_NAME pwa/sw.js
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: pwa
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,58 @@
+name: APK de Android
+
+# Compila la app nativa en la nube. No necesitas Android Studio instalado:
+# editas el código donde sea, haces push, y aquí sale el APK.
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+    inputs:
+      firmar:
+        description: 'Firmar con el keystore de release'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # El runner de ubuntu ya trae el SDK de Android preinstalado.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # El número de build sale del contador de ejecuciones, así el
+      # versionCode nunca se queda en 1 como en el APK actual.
+      - name: Calcular versión
+        run: |
+          echo "VERSION_CODE=${{ github.run_number }}" >> $GITHUB_ENV
+          echo "VERSION_NAME=0.6.${{ github.run_number }}" >> $GITHUB_ENV
+
+      - name: Compilar debug
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon -PversionCode=$VERSION_CODE -PversionName=$VERSION_NAME
+
+      - name: Restaurar keystore
+        if: inputs.firmar
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/release.jks
+
+      - name: Compilar release firmado
+        if: inputs.firmar
+        working-directory: android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --no-daemon -PversionCode=$VERSION_CODE -PversionName=$VERSION_NAME
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk-${{ env.VERSION_NAME }}
+          path: android/app/build/outputs/apk/**/*.apk
+          retention-days: 30
