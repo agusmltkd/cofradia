@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -257,5 +259,33 @@ fun Cabecera(titulo: String, sobretitulo: String? = null, accion: (@Composable (
             Spacer(Modifier.height(6.dp))
         }
         Text(titulo, style = Compas.t.titulo, color = p.tinta)
+    }
+}
+
+/**
+ * Escudo de la hermandad. Si no hay imagen guardada, sus iniciales sobre su
+ * color (nunca un hueco vacío).
+ */
+@Composable
+fun Escudo(hermandad: com.agusmltkd.compas.core.Hermandad, fichero: java.io.File?, tamano: Dp = 48.dp, modifier: Modifier = Modifier) {
+    val imagen = androidx.compose.runtime.remember(fichero?.path, fichero?.lastModified()) {
+        fichero?.let { runCatching { android.graphics.BitmapFactory.decodeFile(it.path)?.asImageBitmap() }.getOrNull() }
+    }
+    if (imagen != null) {
+        androidx.compose.foundation.Image(
+            bitmap = imagen,
+            contentDescription = "Escudo de ${hermandad.nombre}",
+            contentScale = androidx.compose.ui.layout.ContentScale.Fit,
+            modifier = modifier.size(tamano),
+        )
+    } else {
+        val fondo = runCatching { Color(android.graphics.Color.parseColor(hermandad.color)) }.getOrDefault(Compas.p.acento)
+        Box(modifier.size(tamano).clip(CircleShape).background(fondo), contentAlignment = Alignment.Center) {
+            Text(
+                com.agusmltkd.compas.core.iniciales(hermandad),
+                style = Compas.t.cuerpoFuerte.copy(fontSize = (tamano.value * 0.36f).sp),
+                color = Color.White,
+            )
+        }
     }
 }

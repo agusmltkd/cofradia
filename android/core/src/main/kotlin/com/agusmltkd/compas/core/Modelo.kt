@@ -70,6 +70,8 @@ data class Hermandad(
     val ciudad: String = "Sevilla",
     @SerialName("dia_salida") val diaSalida: String? = null,
     val color: String = "#B8862F",
+    /** Imagen pública del escudo (Supabase Storage). La app la guarda para usarla sin red. */
+    @SerialName("escudo_url") val escudoUrl: String? = null,
 )
 
 /** Lo que devuelven `activar` y `sincronizar`, y lo que se guarda en el móvil. */

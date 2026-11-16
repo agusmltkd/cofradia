@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -27,6 +28,7 @@ import com.agusmltkd.compas.core.formatHora
 import com.agusmltkd.compas.core.formatHoraSegundos
 import com.agusmltkd.compas.ui.componentes.BotonPrincipal
 import com.agusmltkd.compas.ui.componentes.BotonSecundario
+import com.agusmltkd.compas.ui.componentes.Escudo
 import com.agusmltkd.compas.ui.componentes.Etiqueta
 import com.agusmltkd.compas.ui.componentes.Separador
 import com.agusmltkd.compas.ui.componentes.Tarjeta
@@ -45,6 +47,8 @@ fun PantallaEnVivo(
     alHablar: () -> Unit,
     alProximos: () -> Unit,
     alTerminar: () -> Unit,
+    datosHermandad: com.agusmltkd.compas.core.Hermandad? = null,
+    escudo: java.io.File? = null,
 ) {
     val p = Compas.p
     Column(
@@ -67,7 +71,13 @@ fun PantallaEnVivo(
                 )
             }
         }
-        Text(hermandad, style = Compas.t.secundario, color = p.tinta3)
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp)) {
+            if (datosHermandad != null) {
+                Escudo(datosHermandad, escudo, 24.dp)
+                Spacer(Modifier.width(8.dp))
+            }
+            Text(hermandad, style = Compas.t.secundario, color = p.tinta3)
+        }
 
         if (estado == null) {
             Spacer(Modifier.height(80.dp))

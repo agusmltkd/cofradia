@@ -97,7 +97,7 @@ export function caducidad(finLicencia: string, ahora = Date.now()): number {
 export async function paquete(db: SupabaseClient, hermandadId: string) {
   const { data: h, error: e1 } = await db
     .from("hermandades")
-    .select("id, slug, nombre, nombre_corto, ciudad, dia_salida, color")
+    .select("id, slug, nombre, nombre_corto, ciudad, dia_salida, color, escudo_url")
     .eq("id", hermandadId)
     .single();
   if (e1 || !h) throw new Error("Hermandad no encontrada");

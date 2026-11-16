@@ -106,6 +106,8 @@ class MainActivity : ComponentActivity() {
                         alHablar = { vm.hablar() },
                         alProximos = { vm.proximos() },
                         alTerminar = vm::detenerVivo,
+                        datosHermandad = e.sesion?.hermandad,
+                        escudo = e.sesion?.escudo,
                     )
                 }
                 else -> PantallaInicio(

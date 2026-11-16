@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -27,6 +28,7 @@ import com.agusmltkd.compas.ui.componentes.BotonPrincipal
 import com.agusmltkd.compas.ui.componentes.BotonSecundario
 import com.agusmltkd.compas.ui.componentes.BotonTexto
 import com.agusmltkd.compas.ui.componentes.Dato
+import com.agusmltkd.compas.ui.componentes.Escudo
 import com.agusmltkd.compas.ui.componentes.Estado
 import com.agusmltkd.compas.ui.componentes.Etiqueta
 import com.agusmltkd.compas.ui.componentes.Paso
@@ -58,15 +60,21 @@ fun PantallaInicio(
     ) {
         // Cabecera: hermandad y estado de la licencia.
         Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Marca(28.dp)
+            Marca(24.dp)
             Spacer(Modifier.weight(1f))
             BotonTexto("Ajustes", { alIr(Pantalla.AJUSTES) })
         }
         Spacer(Modifier.height(20.dp))
-        Etiqueta(listOfNotNull(s.hermandad.diaSalida, s.hermandad.ciudad).joinToString(" · "))
-        Spacer(Modifier.height(6.dp))
-        Text(s.hermandad.nombre, style = Compas.t.titulo, color = p.tinta)
-        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Escudo(s.hermandad, s.escudo, 64.dp)
+            Spacer(Modifier.width(16.dp))
+            Column(Modifier.weight(1f)) {
+                Etiqueta(listOfNotNull(s.hermandad.diaSalida, s.hermandad.ciudad).joinToString(" · "))
+                Spacer(Modifier.height(4.dp))
+                Text(s.hermandad.nombre, style = Compas.t.titulo, color = p.tinta)
+            }
+        }
+        Spacer(Modifier.height(12.dp))
         when (val l = s.licencia) {
             is EstadoLicencia.Activa -> Estado("Licencia activa · funciona sin red ${l.diasRestantes} días más", p.bien)
             EstadoLicencia.Demo -> Estado("Hermandad de ejemplo · datos ficticios", p.acento)

@@ -74,6 +74,8 @@ dialog{border:1px solid var(--linea);border-radius:16px;background:var(--sup);co
 dialog::backdrop{background:rgb(0 0 0 / .45)}
 .login{min-height:100vh;display:grid;place-items:center;padding:24px}
 .login .tarjeta{max-width:400px;width:100%}
+.col{display:flex;flex-direction:column;gap:14px}
+.login a{color:var(--tinta2)}
 @media (max-width:820px){.marco{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--linea)}main{padding:20px 16px 48px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -101,6 +103,30 @@ const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("v"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("v"), 2600); }
 function fallo(error) { if (error) { console.error(error); toast("Error: " + (error.message || error)); return true; } return false; }
+
+// ---------------------------------------------------------------- escudo
+/** El escudo de la hermandad o, si no tiene, sus iniciales sobre su color. */
+function escudoHtml(h, tam = 40) {
+  if (h?.escudo_url) return `<img src="${esc(h.escudo_url)}" alt="" style="width:${tam}px;height:${tam}px;object-fit:contain;flex:none">`;
+  const ini = String(h?.nombre_corto || h?.nombre || "?").replace(/^(hermandad|hdad\.?|cofrad[ií]a)\s+(de\s+)?(la\s+|el\s+|los\s+|las\s+)?/i, "").split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]).join("").toUpperCase();
+  return `<span style="width:${tam}px;height:${tam}px;border-radius:50%;background:${esc(h?.color || "#7A2E3A")};color:#fff;display:inline-grid;place-items:center;font-weight:600;font-size:${Math.round(tam * 0.38)}px;flex:none">${esc(ini)}</span>`;
+}
+/** Reduce la imagen a 512 px como mucho y la devuelve como PNG (mantiene la transparencia). */
+function prepararEscudo(archivo) {
+  return new Promise((ok, mal) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 512 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob((b) => (b ? ok(b) : mal(new Error("No se pudo procesar la imagen"))), "image/png");
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => mal(new Error("Ese archivo no es una imagen válida"));
+    img.src = URL.createObjectURL(archivo);
+  });
+}
 
 // ---------------------------------------------------------------- tiempo
 const fmtHora = (m) => { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); };
@@ -237,14 +263,20 @@ function leerExcel(archivo) {
 
 // ---------------------------------------------------------------- arranque
 async function iniciar() {
+  // El enlace de "he olvidado mi contraseña" vuelve aquí con una sesión temporal:
+  // en ese caso se pide la contraseña nueva antes de entrar.
+  db.auth.onAuthStateChange((ev, s) => {
+    if (ev === "PASSWORD_RECOVERY") { E.recuperando = true; E.usuario = s?.user ?? null; return pintarLogin("nueva"); }
+    const antes = E.usuario?.id; E.usuario = s?.user ?? null;
+    if (antes !== E.usuario?.id && !E.recuperando) cargar();
+  });
   const { data } = await db.auth.getSession();
   E.usuario = data.session?.user ?? null;
-  db.auth.onAuthStateChange((_ev, s) => { const antes = E.usuario?.id; E.usuario = s?.user ?? null; if (antes !== E.usuario?.id) cargar(); });
-  cargar();
+  if (!E.recuperando) cargar();
 }
 
 async function cargar() {
-  if (!E.usuario) return pintarLogin();
+  if (!E.usuario) return pintarLogin("entrar");
   const [{ data: su }, { data: hs, error }] = await Promise.all([
     db.from("superadmins").select("email").maybeSingle(),
     db.from("hermandades").select("*").order("nombre"),
@@ -256,23 +288,90 @@ async function cargar() {
   pintar();
 }
 
-function pintarLogin(enviado) {
-  $("#app").innerHTML = `
-  <div class="login"><div class="tarjeta">
+/** Supabase responde en inglés: lo traducimos a algo que se entienda. */
+function errorAcceso(e) {
+  const m = String(e?.message || e);
+  if (/invalid login credentials/i.test(m)) return "Correo o contraseña incorrectos.";
+  if (/email not confirmed/i.test(m)) return "Aún no has confirmado tu correo. Abre el enlace que te enviamos al crear la cuenta.";
+  if (/already registered|already exists/i.test(m)) return "Ya hay una cuenta con ese correo. Entra o recupera la contraseña.";
+  if (/password should be at least|weak password/i.test(m)) return "La contraseña es demasiado corta: usa al menos 8 caracteres.";
+  if (/rate limit|too many/i.test(m)) return "Demasiados intentos. Espera unos minutos y vuelve a probar.";
+  if (/same.*password|different from the old/i.test(m)) return "La contraseña nueva tiene que ser distinta de la anterior.";
+  return m;
+}
+const URL_PANEL = location.origin + location.pathname;
+
+function pintarLogin(modo = "entrar", info = "") {
+  const vistas = {
+    entrar: `<h2>Entrar</h2><p class="sub" style="margin:6px 0 18px">Panel para administradores de hermandad.</p>
+      <form id="fl" class="col">
+        <label class="campo">Correo<input type="email" name="email" required autocomplete="username" autofocus></label>
+        <label class="campo">Contraseña<input type="password" name="clave" required autocomplete="current-password"></label>
+        <button class="b p" style="justify-content:center">Entrar</button>
+      </form>
+      <div class="fila" style="justify-content:space-between;margin-top:14px;font-size:14px">
+        <a href="#" data-modo="olvido">He olvidado mi contraseña</a><a href="#" data-modo="crear">Crear cuenta</a>
+      </div>`,
+    crear: `<h2>Crear cuenta</h2><p class="sub" style="margin:6px 0 18px">Usa el mismo correo con el que te ha dado de alta tu hermandad. Si no, entrarás pero no verás ninguna.</p>
+      <form id="fl" class="col">
+        <label class="campo">Correo<input type="email" name="email" required autocomplete="username" autofocus></label>
+        <label class="campo">Contraseña (mínimo 8 caracteres)<input type="password" name="clave" required minlength="8" autocomplete="new-password"></label>
+        <label class="campo">Repite la contraseña<input type="password" name="clave2" required minlength="8" autocomplete="new-password"></label>
+        <button class="b p" style="justify-content:center">Crear cuenta</button>
+      </form>
+      <div style="margin-top:14px;font-size:14px"><a href="#" data-modo="entrar">Ya tengo cuenta</a></div>`,
+    olvido: `<h2>Recuperar contraseña</h2><p class="sub" style="margin:6px 0 18px">Te enviamos un enlace para poner una contraseña nueva.</p>
+      <form id="fl" class="col">
+        <label class="campo">Correo<input type="email" name="email" required autocomplete="username" autofocus></label>
+        <button class="b p" style="justify-content:center">Enviar enlace</button>
+      </form>
+      <div style="margin-top:14px;font-size:14px"><a href="#" data-modo="entrar">Volver</a></div>`,
+    nueva: `<h2>Contraseña nueva</h2><p class="sub" style="margin:6px 0 18px">Elige la contraseña con la que entrarás a partir de ahora.</p>
+      <form id="fl" class="col">
+        <label class="campo">Contraseña nueva<input type="password" name="clave" required minlength="8" autocomplete="new-password" autofocus></label>
+        <label class="campo">Repítela<input type="password" name="clave2" required minlength="8" autocomplete="new-password"></label>
+        <button class="b p" style="justify-content:center">Guardar y entrar</button>
+      </form>`,
+    revisa: `<h2>Revisa tu correo</h2><p class="sub" style="margin:6px 0 18px">${info}</p>
+      <button class="b" data-modo="entrar">Volver a entrar</button>`,
+  };
+  $("#app").innerHTML = `<div class="login"><div class="tarjeta">
     <div class="marca" style="padding:0 0 22px">${MARCA}<span>Compás · Panel</span></div>
-    ${enviado ? `<h2>Revisa tu correo</h2><p class="sub" style="margin-top:8px">Te hemos enviado un enlace a <b>${esc(enviado)}</b>. Ábrelo en este mismo navegador para entrar.</p>
-      <button class="b" onclick="pintarLogin()">Usar otro correo</button>`
-    : `<h2>Entrar</h2><p class="sub" style="margin-top:6px">Para administradores de hermandad. Te enviaremos un enlace de acceso, sin contraseña.</p>
-      <form id="fl" class="fila" style="flex-direction:column;align-items:stretch;gap:12px">
-        <input type="email" name="email" required placeholder="correo@ejemplo.com" autocomplete="email">
-        <button class="b p" style="justify-content:center">Enviarme el enlace</button>
-      </form>`}
-  </div></div>`;
+    ${vistas[modo]}<div id="errLogin" class="aviso grave" style="display:none;margin-top:14px"></div></div></div>`;
+  document.querySelectorAll("[data-modo]").forEach((a) => a.addEventListener("click", (ev) => { ev.preventDefault(); pintarLogin(a.dataset.modo); }));
+  const mostrar = (t) => { const el = $("#errLogin"); el.textContent = t; el.style.display = t ? "block" : "none"; };
   $("#fl")?.addEventListener("submit", async (ev) => {
     ev.preventDefault();
-    const email = new FormData(ev.target).get("email").trim().toLowerCase();
-    const { error } = await db.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: true } });
-    if (!fallo(error)) pintarLogin(email);
+    const v = Object.fromEntries(new FormData(ev.target));
+    const email = String(v.email || "").trim().toLowerCase();
+    const boton = ev.target.querySelector("button"); boton.disabled = true;
+    try {
+      if ((modo === "crear" || modo === "nueva") && v.clave !== v.clave2) throw new Error("Las dos contraseñas no coinciden.");
+      if (modo === "entrar") {
+        const { error } = await db.auth.signInWithPassword({ email, password: v.clave });
+        if (error) throw error;
+      } else if (modo === "crear") {
+        const { data, error } = await db.auth.signUp({ email, password: v.clave, options: { emailRedirectTo: URL_PANEL } });
+        if (error) throw error;
+        // Si el proyecto pide confirmar el correo, no hay sesión todavía.
+        if (!data.session) return pintarLogin("revisa", `Te hemos enviado un enlace a <b>${esc(email)}</b> para confirmar la cuenta. Ábrelo y después entra con tu contraseña.`);
+      } else if (modo === "olvido") {
+        const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: URL_PANEL });
+        if (error) throw error;
+        return pintarLogin("revisa", `Si <b>${esc(email)}</b> tiene cuenta, le llegará un enlace para poner una contraseña nueva. Ábrelo en este mismo navegador.`);
+      } else if (modo === "nueva") {
+        const { error } = await db.auth.updateUser({ password: v.clave });
+        if (error) throw error;
+        E.recuperando = false;
+        history.replaceState(null, "", URL_PANEL);
+        toast("Contraseña guardada");
+        return cargar();
+      }
+    } catch (e) {
+      mostrar(errorAcceso(e));
+    } finally {
+      boton.disabled = false;
+    }
   });
 }
 
@@ -292,7 +391,8 @@ function pintar() {
       <div class="rotulo" style="padding:0 10px 6px">Hermandad</div>
       <div style="padding:0 6px 16px">
         ${E.hermandades.length ? `<select id="selH" style="width:100%">${E.hermandades.map((x) => `<option value="${x.id}" ${x.id === E.hid ? "selected" : ""}>${esc(x.nombre_corto || x.nombre)}</option>`).join("")}</select>` : `<div class="aviso">Ninguna asignada</div>`}
-        ${E.superadmin ? `<button class="b mini" style="margin-top:8px;width:100%;justify-content:center" onclick="dlgHermandad()">+ Nueva hermandad</button>` : ""}
+        ${h ? `<div class="fila" style="gap:10px;margin-top:12px;flex-wrap:nowrap">${escudoHtml(h, 36)}<span style="font-size:13px;line-height:1.3;color:var(--tinta2)">${esc(h.nombre)}</span></div>` : ""}
+        ${E.superadmin ? `<button class="b mini" style="margin-top:12px;width:100%;justify-content:center" onclick="dlgHermandad()">+ Nueva hermandad</button>` : ""}
       </div>
       <nav>${h ? vistas.map(([k, t]) => `<button data-v="${k}" class="${E.vista === k ? "on" : ""}">${t}</button>`).join("") : ""}</nav>
       <div style="padding:22px 10px 0;font-size:13px;color:var(--tinta3)">
@@ -541,6 +641,15 @@ async function borrarDisp(id) { if (!confirm("¿Borrar este móvil del listado?"
 function vHermandad(h) {
   $("#main").innerHTML = `
     <div class="rotulo">${esc(h.nombre)}</div><h1>Datos de la hermandad</h1><p class="sub">Lo que ven los fiscales en la cabecera de la app.</p>
+    <div class="tarjeta fila" style="margin-bottom:16px;gap:20px">
+      <div id="escPrev">${escudoHtml(h, 96)}</div>
+      <div style="flex:1;min-width:220px"><h2>Escudo</h2>
+        <p style="color:var(--tinta2);margin:4px 0 12px;font-size:14px">Aparece en la app de los fiscales. Mejor un PNG con fondo transparente. Se reduce solo a 512 px.</p>
+        <div class="fila"><label class="b" style="cursor:pointer">${h.escudo_url ? "Cambiar escudo" : "Subir escudo"}<input type="file" id="fEsc" accept="image/png,image/jpeg,image/webp" hidden></label>
+        ${h.escudo_url ? `<button class="b peligro" id="qEsc">Quitar</button>` : ""}</div>
+        <p style="color:var(--tinta3);margin:10px 0 0;font-size:13px">Los móviles lo descargan la próxima vez que sincronicen y lo guardan para usarlo sin red.</p>
+      </div>
+    </div>
     <form id="fh" class="tarjeta"><div class="rejilla">
       <label class="campo" style="grid-column:1/-1">Nombre completo<input name="nombre" value="${esc(h.nombre)}" required></label>
       <label class="campo">Nombre corto<input name="nombre_corto" value="${esc(h.nombre_corto || "")}"></label>
@@ -548,6 +657,30 @@ function vHermandad(h) {
       <label class="campo">Día de salida<input name="dia_salida" value="${esc(h.dia_salida || "")}" placeholder="Martes Santo"></label>
       <label class="campo">Color<input name="color" type="color" value="${esc(h.color)}" style="height:40px;padding:4px"></label>
     </div><div class="fila" style="margin-top:18px"><div class="esp"></div><button class="b p">Guardar</button></div></form>`;
+  $("#fEsc").addEventListener("change", async (ev) => {
+    const f = ev.target.files[0]; if (!f) return;
+    try {
+      toast("Subiendo escudo…");
+      const png = await prepararEscudo(f);
+      const ruta = `${h.id}/escudo-${Date.now()}.png`;
+      const { error: e1 } = await db.storage.from("escudos").upload(ruta, png, { contentType: "image/png", cacheControl: "31536000" });
+      if (e1) throw e1;
+      const url = db.storage.from("escudos").getPublicUrl(ruta).data.publicUrl;
+      const viejo = h.escudo_url?.split("/escudos/")[1];
+      const { error: e2 } = await db.from("hermandades").update({ escudo_url: url }).eq("id", h.id);
+      if (e2) throw e2;
+      if (viejo) await db.storage.from("escudos").remove([decodeURIComponent(viejo)]);
+      toast("Escudo actualizado"); cargar();
+    } catch (e) { fallo(e); }
+  });
+  $("#qEsc")?.addEventListener("click", async () => {
+    if (!confirm("¿Quitar el escudo? Se mostrarán las iniciales.")) return;
+    const viejo = h.escudo_url?.split("/escudos/")[1];
+    const { error } = await db.from("hermandades").update({ escudo_url: null }).eq("id", h.id);
+    if (fallo(error)) return;
+    if (viejo) await db.storage.from("escudos").remove([decodeURIComponent(viejo)]);
+    toast("Escudo quitado"); cargar();
+  });
   $("#fh").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const v = Object.fromEntries(new FormData(ev.target));

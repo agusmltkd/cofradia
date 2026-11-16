@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import com.agusmltkd.compas.ui.Ajustes
 import com.agusmltkd.compas.ui.UiEstado
 import com.agusmltkd.compas.ui.componentes.BotonSecundario
 import com.agusmltkd.compas.ui.componentes.Cabecera
+import com.agusmltkd.compas.ui.componentes.Escudo
 import com.agusmltkd.compas.ui.componentes.Etiqueta
 import com.agusmltkd.compas.ui.componentes.FilaInterruptor
 import com.agusmltkd.compas.ui.componentes.Segmentado
@@ -94,8 +96,12 @@ fun PantallaAjustes(
             Etiqueta("Hermandad")
             Spacer(Modifier.height(8.dp))
             Tarjeta(Modifier.fillMaxWidth()) {
-                Text(s.hermandad.nombre, style = Compas.t.cuerpoFuerte, color = p.tinta)
-                Spacer(Modifier.height(4.dp))
+                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                    Escudo(s.hermandad, s.escudo, 40.dp)
+                    Spacer(Modifier.width(12.dp))
+                    Text(s.hermandad.nombre, style = Compas.t.cuerpoFuerte, color = p.tinta)
+                }
+                Spacer(Modifier.height(8.dp))
                 val rol = when (s.rol) {
                     "diputado_mayor" -> "Diputado Mayor de Gobierno"
                     "consulta" -> "Solo consulta"

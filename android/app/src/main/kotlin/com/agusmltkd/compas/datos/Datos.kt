@@ -44,6 +44,8 @@ data class Sesion(
     val licencia: EstadoLicencia,
     val esDemo: Boolean,
     val ultimaSincronizacion: Long,
+    /** Escudo guardado en el móvil (null = se muestran las iniciales). */
+    val escudo: File? = null,
 ) {
     val puedeSalirEnVivo: Boolean get() = licencia is EstadoLicencia.Activa || licencia is EstadoLicencia.Demo
 }
@@ -84,9 +86,18 @@ class Almacen(private val contexto: Context) {
         null
     }
 
+    // ---- escudo: se descarga al sincronizar y se guarda para usarlo sin red
+    val ficheroEscudo = File(contexto.filesDir, "escudo.img")
+    var escudoDescargado: String?
+        get() = prefs.getString("escudo_url", null)
+        set(v) = prefs.edit().putString("escudo_url", v).apply()
+
+    fun escudo(): File? = ficheroEscudo.takeIf { it.exists() && it.length() > 0 }
+
     fun borrarTodo() {
         prefs.edit().clear().apply()
         fichero.delete()
+        ficheroEscudo.delete()
     }
 
     // ---- ajustes
@@ -141,6 +152,16 @@ class Api {
                 throw ErrorApi(err?.error ?: "http_${it.code}", err?.mensaje ?: "El servidor respondió con un error (${it.code}).")
             }
             JsonCompas.decodeFromString(Paquete.serializer(), texto)
+        }
+    }
+
+    /** Descarga una imagen pequeña (el escudo). Máximo 2 MB. */
+    suspend fun descargar(url: String): ByteArray = withContext(Dispatchers.IO) {
+        http.newCall(Request.Builder().url(url).build()).execute().use {
+            if (!it.isSuccessful) throw IOException("HTTP ${it.code}")
+            val bytes = it.body?.bytes() ?: throw IOException("Respuesta vacía")
+            if (bytes.size > 2_000_000) throw IOException("Imagen demasiado grande")
+            bytes
         }
     }
 
@@ -199,7 +220,29 @@ class Repositorio(private val almacen: Almacen, private val api: Api) {
             licencia = estado,
             esDemo = false,
             ultimaSincronizacion = almacen.ultimaSincronizacion,
+            escudo = almacen.escudo(),
         )
+    }
+
+    /**
+     * Mantiene al día el escudo guardado. Si falla la descarga no pasa nada:
+     * se sigue usando el que había (o las iniciales).
+     */
+    private suspend fun actualizarEscudo(url: String?) {
+        if (url == null) {
+            almacen.ficheroEscudo.delete()
+            almacen.escudoDescargado = null
+            return
+        }
+        if (url == almacen.escudoDescargado && almacen.escudo() != null) return
+        try {
+            val bytes = api.descargar(url)
+            val tmp = File(almacen.ficheroEscudo.parentFile, "escudo.tmp")
+            tmp.writeBytes(bytes)
+            tmp.renameTo(almacen.ficheroEscudo)
+            almacen.escudoDescargado = url
+        } catch (_: Exception) {
+        }
     }
 
     fun sesionDemo(): Sesion {
@@ -220,6 +263,7 @@ class Repositorio(private val almacen: Almacen, private val api: Api) {
         almacen.maximoVisto = p.servidorAhora
         almacen.ultimaSincronizacion = ahora()
         almacen.guardarPaquete(p)
+        actualizarEscudo(p.hermandad.escudoUrl)
         return sesionDe(p)
     }
 
@@ -235,6 +279,7 @@ class Repositorio(private val almacen: Almacen, private val api: Api) {
         almacen.maximoVisto = p.servidorAhora
         almacen.ultimaSincronizacion = ahora()
         almacen.guardarPaquete(p)
+        actualizarEscudo(p.hermandad.escudoUrl)
         return sesionDe(p)
     }
 

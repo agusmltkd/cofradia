@@ -51,7 +51,7 @@ private fun estadoEjemplo(retraso: Int = 12, seccion: Int = 0): UiEstado {
 private fun EnVivoEjemplo() {
     val e = estadoEjemplo(0)
     val h = e.calculo!!.resultado.horarios
-    PantallaEnVivo(estadoVivo(h, h[4].nueva * 60L - 204), "Cruz de guía", "Hermandad de Ejemplo", ensayo = false, {}, {}, {})
+    PantallaEnVivo(estadoVivo(h, h[4].nueva * 60L - 204), "Cruz de guía", "Hermandad de Ejemplo", ensayo = false, {}, {}, {}, datosHermandad = e.sesion!!.hermandad)
 }
 
 @Preview(name = "1 · Activación", widthDp = 390, heightDp = 844, showBackground = true)

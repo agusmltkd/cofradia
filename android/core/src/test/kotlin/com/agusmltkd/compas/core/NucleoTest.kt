@@ -159,3 +159,15 @@ class LicenciaTest {
         assertEquals(ResultadoLicencia.Malformada, v.verificar("basura", 1))
     }
 }
+
+class InicialesTest {
+    private fun h(nombre: String, corto: String? = null) = Hermandad("x", "x", nombre, corto)
+
+    @Test fun ejemplos() {
+        assertEquals("SE", iniciales(h("Hermandad de San Esteban")))
+        assertEquals("SE", iniciales(h("Hermandad de San Esteban", "San Esteban")))
+        assertEquals("E", iniciales(h("Hermandad de la Estrella")))
+        assertEquals("GP", iniciales(h("Pontificia y Real Hermandad del Gran Poder")))
+        assertEquals("E", iniciales(h("Hermandad de Ejemplo")))
+    }
+}
