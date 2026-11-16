@@ -33,7 +33,7 @@ Productividad (alternativa: Estilo de vida)
 cofradía, hermandad, Semana Santa, estación de penitencia, horarios, itinerario, diputado de tramo, fiscal, carrera oficial
 
 ## Contacto
-Correo: (pendiente: crear uno para la app)
+Correo: mayoragustin01@gmail.com
 Web: https://agusmltkd.github.io/cofradia/
 Política de privacidad: https://agusmltkd.github.io/cofradia/privacidad.html
 
