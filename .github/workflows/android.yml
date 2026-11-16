@@ -22,6 +22,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: android
@@ -96,3 +98,21 @@ jobs:
             android/app/build/outputs/apk/release/*.apk
             android/app/build/outputs/mapping/release/mapping.txt
           retention-days: 90
+
+      # Las capturas también se guardan en la rama `capturas` (carpeta docs/capturas),
+      # para verlas en GitHub sin descargar nada.
+      - name: Publicar capturas en la rama capturas
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        working-directory: .
+        run: |
+          set -e
+          mkdir -p /tmp/capturas && cp android/app/src/test/snapshots/images/*.png /tmp/capturas/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan capturas
+          git rm -rfq . && git clean -fdxq
+          mkdir -p docs/capturas && cp /tmp/capturas/*.png docs/capturas/
+          git add docs/capturas
+          git commit -qm "Capturas ${{ env.VERSION_NAME }}"
+          git push -f origin capturas
