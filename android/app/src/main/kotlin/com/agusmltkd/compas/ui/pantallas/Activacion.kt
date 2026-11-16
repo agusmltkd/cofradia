@@ -129,10 +129,9 @@ fun PantallaActivacion(
         Spacer(Modifier.height(32.dp))
         Separador()
         Spacer(Modifier.height(8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("¿Solo quieres verla?", style = Compas.t.secundario, color = p.tinta2, modifier = Modifier.weight(1f))
-            BotonTexto("Probar con una hermandad de ejemplo", alProbarDemo, color = p.acento)
-        }
+        Spacer(Modifier.height(8.dp))
+        Text("¿Solo quieres verla?", style = Compas.t.secundario, color = p.tinta2)
+        BotonTexto("Probar con una hermandad de ejemplo →", alProbarDemo, Modifier.padding(start = 0.dp), color = p.acento)
         Spacer(Modifier.height(32.dp))
     }
 }
