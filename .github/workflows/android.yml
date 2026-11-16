@@ -60,6 +60,19 @@ jobs:
           path: android/core/build/reports/tests/
           retention-days: 7
 
+      # Capturas reales de las pantallas (sin emulador) para revisar el diseño
+      # y para la ficha de Google Play.
+      - name: Capturas de pantalla
+        continue-on-error: true
+        run: ./gradlew :app:recordPaparazziDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capturas-${{ env.VERSION_NAME }}
+          path: android/app/src/test/snapshots/images/
+          retention-days: 30
+
       # ---- Release firmado (solo a mano, con la casilla marcada) ----
       - name: Restaurar keystore
         if: inputs.release
