@@ -76,14 +76,24 @@ jobs:
           retention-days: 30
 
       # ---- Release firmado (solo a mano, con la casilla marcada) ----
+      # Sin secretos configurados se genera igualmente, pero SIN firmar (sirve
+      # para comprobar que compila; Google Play solo acepta el firmado).
       - name: Restaurar keystore
         if: inputs.release
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/subida.jks
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > $RUNNER_TEMP/subida.jks
+            echo "KEYSTORE_PATH=$RUNNER_TEMP/subida.jks" >> $GITHUB_ENV
+            echo "Keystore restaurado: el AAB saldrá firmado."
+          else
+            echo "::warning::No hay secretos de firma: el AAB saldrá SIN firmar."
+          fi
 
       - name: AAB y APK de release
         if: inputs.release
         env:
-          KEYSTORE_PATH: ${{ runner.temp }}/subida.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
