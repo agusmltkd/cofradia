@@ -1,0 +1,70 @@
+STATIO · «La salida» · vídeo vertical de 32 s (sale sin sonido)
+================================================================
+
+MAPA DEL VÍDEO
+0:00 – 0:04    Reloj: Martes Santo, 14:40:00 · HORA DE SALIDA
+0:04 – 0:12    El paso sale por la puerta (capataz, llamador, Marcha Real)
+0:12 – 0:24,5  Mini recorrido: Salida → Banco de España → Catedral → Alfalfa → Entrada
+0:24,5 – 0:28  Entrada: «¡Ahí quedó!»
+0:28 – 0:32    Logo Statio + «El horario de tu cofradía, al oído.»
+
+
+1) VOZ DEL CAPATAZ (ElevenLabs → Voice Design)
+Descripción para crear la voz (pégala tal cual):
+  "Hombre de unos 55 años de Sevilla, acento andaluz cerrado, voz grave y algo
+   ronca, gritando con fuerza en una calle estrecha con eco, tono de mando pero cariñoso."
+
+Frases (genera una por una y colócalas en su segundo; en el vídeo aparecen escritas):
+  0:04,8   "¡A esta es!"                      ← justo antes, los 3 golpes del llamador
+  0:05,9   "¡Al cielo con ella!"
+  0:07,0   "Un poquito más… un poquito más…"
+  0:08,0   "Menos… menos… ¡menos!"
+  0:09,0   "¡De frente!"
+  0:12,6   "¡Vámonos valientes!"               (recorrido: volumen al 40 %, de fondo)
+  0:15,0   "¡Poquito a poco!"
+  0:17,3   "¡Todos por igual!"
+  0:19,6   "¡De frente, despacio!"
+  0:21,9   "¡Arriba con ella!"
+  0:26,5   "¡Ahí quedó!"                       (volumen al 100 %, que se oiga bien)
+
+Ajustes: Estabilidad baja (25–35 %) para que suene a grito real; Estilo alto.
+Si alguna frase sale demasiado «de locutor», regenérala; con 3–4 intentos sale bien.
+
+
+2) EFECTOS (ElevenLabs → Sound Effects)
+  0:04,9   "Three loud metallic knocks of a door knocker on wood, outdoors, short echo"
+           (el llamador: los anillos dorados del vídeo marcan cada golpe en 4,9 / 5,25 / 5,6)
+  0:05,9   "Crowd applause and cheering in a narrow Spanish street, short burst"
+  0:12 – 0:24  "Slow shuffling footsteps of many men walking in unison on stone, rhythmic"
+           (el racheo de los costaleros, de fondo y bajito)
+  0:24,5   "Distant crowd murmur, church bells far away" (para la entrada)
+
+
+3) MARCHA REAL (desde 0:10 hasta 0:24,5, bajando volumen al entrar en el recorrido)
+La música es de dominio público, pero cada grabación tiene sus derechos.
+Opción segura: la versión de la United States Navy Band. Las grabaciones de las
+bandas militares de EE. UU. son de dominio público. Búscala en Wikimedia Commons:
+  "Marcha Real" + "United States Navy Band"
+Alternativa: en Instagram/TikTok, añade la música desde su biblioteca (busca
+«Marcha Real»); ahí la licencia la cubre la propia red social.
+Ideal si un día tenéis grabación propia: la banda de vuestra hermandad tocándola
+en una salida (pide permiso a la banda).
+
+
+4) MONTAJE EN CAPCUT
+1. Importa statio-la-salida.mp4.
+2. Pista 1: Marcha Real (entra en 0:10, fundido de 1 s; al 30 % desde 0:12).
+3. Pista 2: voces del capataz en su segundo (arriba).
+4. Pista 3: efectos.
+5. En 0:28 (logo) baja todo y deja solo la música apagándose.
+6. Exporta 1080 × 1920, 30 fps. No hace falta poner subtítulos: las órdenes ya
+   salen escritas.
+
+
+TEXTO PARA LA PUBLICACIÓN
+Instagram / TikTok:
+  14:40. Hora de salida. «¡A esta es!»
+  Y a partir de ahí, cada fiscal sabe dónde tiene que estar su tramo, en cada calle, sin sacar el móvil.
+  Statio: el horario de tu cofradía, al oído.
+  ¿La quieres para tu hermandad? Escríbenos por privado.
+  #SemanaSanta #Sevilla #Cofradías #Capataz #Costaleros #Hermandades #Statio
