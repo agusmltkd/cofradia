@@ -58,9 +58,14 @@ private val PuntosMarca = listOf(70.0f to 36.0f, 62.89f to 29.1f, 52.32f to 28.3
 @Composable
 fun Marca(tamano: Dp = 44.dp, tinta: Color = Compas.p.tinta, acento: Color = Compas.p.acento) {
     Canvas(Modifier.size(tamano)) {
-        // El símbolo ocupa x 30..80, y 28..86 de la caja de 108: lo encuadramos.
-        val k = size.minDimension / 58f
-        fun pos(x: Float, y: Float) = Offset((x - 26f) * k, (y - 28f) * k)
+        // El símbolo (S de x 30..80, y 28..86; la cruz sube a y 22) se encuadra en la caja de 108.
+        val k = size.minDimension / 72f
+        fun pos(x: Float, y: Float) = Offset((x - 18f) * k, (y - 20f) * k)
+        // Cruz dorada tenue detrás de la S (mismas medidas que marca/generar.py).
+        val cruz = acento.copy(alpha = 0.62f)
+        val g = 4f * k
+        drawRoundRect(cruz, topLeft = pos(52f, 22f), size = androidx.compose.ui.geometry.Size(g, 69f * k), cornerRadius = androidx.compose.ui.geometry.CornerRadius(g / 2))
+        drawRoundRect(cruz, topLeft = pos(35f, 37f), size = androidx.compose.ui.geometry.Size(38f * k, g), cornerRadius = androidx.compose.ui.geometry.CornerRadius(g / 2))
         PuntosMarca.dropLast(1).forEachIndexed { i, (x, y) ->
             drawCircle(tinta, radius = (if (i == 0) 4.8f else 3.4f) * k, center = pos(x, y))
         }
