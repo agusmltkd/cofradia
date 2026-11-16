@@ -1,25 +1,33 @@
-name: APK de Android
+name: App Android
 
-# Compila la app nativa en la nube. No necesitas Android Studio instalado:
-# editas el código donde sea, haces push, y aquí sale el APK.
+# Compila la app en la nube. No necesitas Android Studio para obtener un APK:
+# haz push (o lanza el workflow a mano) y descárgalo de la pestaña Actions.
 on:
   push:
     branches: [main]
     paths: ['android/**', '.github/workflows/android.yml']
+  pull_request:
+    paths: ['android/**']
   workflow_dispatch:
     inputs:
-      firmar:
-        description: 'Firmar con el keystore de release'
+      release:
+        description: 'Generar AAB firmado para Google Play'
         type: boolean
         default: false
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
     steps:
       - uses: actions/checkout@v4
 
-      # El runner de ubuntu ya trae el SDK de Android preinstalado.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -27,32 +35,51 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      # El número de build sale del contador de ejecuciones, así el
-      # versionCode nunca se queda en 1 como en el APK actual.
-      - name: Calcular versión
+      - name: Versión
         run: |
-          echo "VERSION_CODE=${{ github.run_number }}" >> $GITHUB_ENV
-          echo "VERSION_NAME=0.6.${{ github.run_number }}" >> $GITHUB_ENV
+          echo "VERSION_CODE=$(( 100 + ${{ github.run_number }} ))" >> $GITHUB_ENV
+          echo "VERSION_NAME=1.0.${{ github.run_number }}" >> $GITHUB_ENV
 
-      - name: Compilar debug
-        working-directory: android
-        run: ./gradlew assembleDebug --no-daemon -PversionCode=$VERSION_CODE -PversionName=$VERSION_NAME
+      - name: Tests del núcleo
+        run: ./gradlew :core:test --no-daemon
 
-      - name: Restaurar keystore
-        if: inputs.firmar
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/release.jks
-
-      - name: Compilar release firmado
-        if: inputs.firmar
-        working-directory: android
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleRelease --no-daemon -PversionCode=$VERSION_CODE -PversionName=$VERSION_NAME
+      - name: APK de pruebas
+        run: ./gradlew :app:assembleDebug --no-daemon -PversionCode=$VERSION_CODE -PversionName=$VERSION_NAME
 
       - uses: actions/upload-artifact@v4
         with:
-          name: apk-${{ env.VERSION_NAME }}
-          path: android/app/build/outputs/apk/**/*.apk
+          name: compas-pruebas-${{ env.VERSION_NAME }}
+          path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 30
+
+      - name: Informe de tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-${{ env.VERSION_NAME }}
+          path: android/core/build/reports/tests/
+          retention-days: 7
+
+      # ---- Release firmado (solo a mano, con la casilla marcada) ----
+      - name: Restaurar keystore
+        if: inputs.release
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $RUNNER_TEMP/subida.jks
+
+      - name: AAB y APK de release
+        if: inputs.release
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/subida.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew :app:bundleRelease :app:assembleRelease --no-daemon -PversionCode=$VERSION_CODE -PversionName=$VERSION_NAME
+
+      - uses: actions/upload-artifact@v4
+        if: inputs.release
+        with:
+          name: compas-release-${{ env.VERSION_NAME }}
+          path: |
+            android/app/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/mapping/release/mapping.txt
+          retention-days: 90

@@ -1,0 +1,35 @@
+name: Web (panel y privacidad)
+
+# Publica la carpeta web/ en GitHub Pages:
+#   https://agusmltkd.github.io/cofradia/              → portada
+#   https://agusmltkd.github.io/cofradia/panel/        → panel de administración
+#   https://agusmltkd.github.io/cofradia/privacidad.html → política de privacidad (la pide Google Play)
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', '.github/workflows/web.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,375 @@
+{
+ "hermandad": {
+  "id": "demo",
+  "slug": "demo",
+  "nombre": "Hermandad de Ejemplo",
+  "nombre_corto": "Ejemplo",
+  "ciudad": "Sevilla",
+  "dia_salida": "Martes Santo",
+  "color": "#7A2E3A"
+ },
+ "itinerarios": [
+  {
+   "id": "demo-sol",
+   "nombre": "Itinerario oficial",
+   "orden": 0,
+   "version": 1,
+   "datos": {
+    "puntos": [
+     {
+      "id": "00-salida-del-templo",
+      "nombre": "Salida del templo",
+      "ancla": false
+     },
+     {
+      "id": "01-plaza-del-convento",
+      "nombre": "Plaza del Convento",
+      "ancla": false
+     },
+     {
+      "id": "02-calle-alfareria",
+      "nombre": "Calle Alfarería",
+      "ancla": false
+     },
+     {
+      "id": "03-esquina-de-la-botica",
+      "nombre": "Esquina de la Botica",
+      "ancla": false
+     },
+     {
+      "id": "04-plaza-de-la-merced",
+      "nombre": "Plaza de la Merced",
+      "ancla": false
+     },
+     {
+      "id": "05-calle-ancha-principio",
+      "nombre": "Calle Ancha (principio)",
+      "ancla": false
+     },
+     {
+      "id": "06-calle-ancha-final",
+      "nombre": "Calle Ancha (final)",
+      "ancla": false
+     },
+     {
+      "id": "07-arco-de-la-juderia",
+      "nombre": "Arco de la Judería",
+      "ancla": false
+     },
+     {
+      "id": "08-plaza-del-pozo-santo",
+      "nombre": "Plaza del Pozo Santo",
+      "ancla": false
+     },
+     {
+      "id": "09-calle-cerrajeria",
+      "nombre": "Calle Cerrajería",
+      "ancla": false
+     },
+     {
+      "id": "10-plaza-nueva-esquina",
+      "nombre": "Plaza Nueva (esquina)",
+      "ancla": false
+     },
+     {
+      "id": "11-palquillo-de-la-carrera-oficial",
+      "nombre": "Palquillo de la carrera oficial",
+      "ancla": true,
+      "nota": "Punto de horario fijo: no se negocia"
+     },
+     {
+      "id": "12-tribuna-principal",
+      "nombre": "Tribuna principal",
+      "ancla": false
+     },
+     {
+      "id": "13-puerta-de-la-catedral",
+      "nombre": "Puerta de la Catedral",
+      "ancla": false
+     },
+     {
+      "id": "14-salida-de-la-catedral",
+      "nombre": "Salida de la Catedral",
+      "ancla": false
+     },
+     {
+      "id": "15-calle-placentines",
+      "nombre": "Calle Placentines",
+      "ancla": false
+     },
+     {
+      "id": "16-plaza-de-la-alfalfa",
+      "nombre": "Plaza de la Alfalfa",
+      "ancla": false
+     },
+     {
+      "id": "17-calle-alfareria-vuelta",
+      "nombre": "Calle Alfarería (vuelta)",
+      "ancla": false
+     },
+     {
+      "id": "18-plaza-del-convento-vuelta",
+      "nombre": "Plaza del Convento (vuelta)",
+      "ancla": false
+     },
+     {
+      "id": "19-entrada-en-el-templo",
+      "nombre": "Entrada en el templo",
+      "ancla": false
+     }
+    ],
+    "secciones": [
+     {
+      "id": "cruz",
+      "nombre": "Cruz de guía",
+      "salida": 1080,
+      "tramos": [
+       {
+        "andar": 5,
+        "paron": 3
+       },
+       {
+        "andar": 6,
+        "paron": 2
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 4,
+        "paron": 3
+       },
+       {
+        "andar": 7,
+        "paron": 2
+       },
+       {
+        "andar": 7,
+        "paron": 3
+       },
+       {
+        "andar": 4,
+        "paron": 2
+       },
+       {
+        "andar": 6,
+        "paron": 4
+       },
+       {
+        "andar": 4,
+        "paron": 3
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 6,
+        "paron": 2
+       },
+       {
+        "andar": 7,
+        "paron": 2
+       },
+       {
+        "andar": 5,
+        "paron": 5
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 7,
+        "paron": 4
+       },
+       {
+        "andar": 4,
+        "paron": 3
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 5,
+        "paron": 3
+       },
+       {
+        "andar": 6,
+        "paron": 3
+       }
+      ]
+     },
+     {
+      "id": "cristo",
+      "nombre": "Paso de Cristo",
+      "salida": 1105,
+      "tramos": [
+       {
+        "andar": 5,
+        "paron": 3
+       },
+       {
+        "andar": 6,
+        "paron": 2
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 4,
+        "paron": 3
+       },
+       {
+        "andar": 7,
+        "paron": 2
+       },
+       {
+        "andar": 7,
+        "paron": 3
+       },
+       {
+        "andar": 4,
+        "paron": 2
+       },
+       {
+        "andar": 6,
+        "paron": 4
+       },
+       {
+        "andar": 4,
+        "paron": 3
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 6,
+        "paron": 2
+       },
+       {
+        "andar": 7,
+        "paron": 2
+       },
+       {
+        "andar": 5,
+        "paron": 5
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 7,
+        "paron": 4
+       },
+       {
+        "andar": 4,
+        "paron": 3
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 5,
+        "paron": 3
+       },
+       {
+        "andar": 6,
+        "paron": 3
+       }
+      ]
+     },
+     {
+      "id": "palio",
+      "nombre": "Paso de palio",
+      "salida": 1130,
+      "tramos": [
+       {
+        "andar": 5,
+        "paron": 3
+       },
+       {
+        "andar": 6,
+        "paron": 2
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 4,
+        "paron": 3
+       },
+       {
+        "andar": 7,
+        "paron": 2
+       },
+       {
+        "andar": 7,
+        "paron": 3
+       },
+       {
+        "andar": 4,
+        "paron": 2
+       },
+       {
+        "andar": 6,
+        "paron": 4
+       },
+       {
+        "andar": 4,
+        "paron": 3
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 6,
+        "paron": 2
+       },
+       {
+        "andar": 7,
+        "paron": 2
+       },
+       {
+        "andar": 5,
+        "paron": 5
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 7,
+        "paron": 4
+       },
+       {
+        "andar": 4,
+        "paron": 3
+       },
+       {
+        "andar": 4,
+        "paron": 5
+       },
+       {
+        "andar": 5,
+        "paron": 3
+       },
+       {
+        "andar": 6,
+        "paron": 3
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

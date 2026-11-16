@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="canal_vivo">Modo en vivo</string>
+    <string name="canal_vivo_desc">Aviso permanente mientras la app canta el itinerario</string>
+</resources>
