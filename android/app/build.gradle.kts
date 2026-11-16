@@ -23,17 +23,17 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = prop("compas.applicationId")
+        applicationId = prop("statio.applicationId")
         minSdk = 26
         targetSdk = 36
         versionCode = (findProperty("versionCode") as String?)?.toInt() ?: 1
         versionName = (findProperty("versionName") as String?) ?: "1.0.0"
 
-        resValue("string", "app_name", prop("compas.nombreApp"))
-        buildConfigField("String", "SUPABASE_URL", "\"${prop("compas.supabaseUrl")}\"")
-        buildConfigField("String", "SUPABASE_KEY", "\"${prop("compas.supabaseKey")}\"")
-        buildConfigField("String", "CLAVE_PUBLICA_LICENCIA", "\"${prop("compas.clavePublicaLicencia")}\"")
-        buildConfigField("String", "URL_PRIVACIDAD", "\"${prop("compas.urlPrivacidad")}\"")
+        resValue("string", "app_name", prop("statio.nombreApp"))
+        buildConfigField("String", "SUPABASE_URL", "\"${prop("statio.supabaseUrl")}\"")
+        buildConfigField("String", "SUPABASE_KEY", "\"${prop("statio.supabaseKey")}\"")
+        buildConfigField("String", "CLAVE_PUBLICA_LICENCIA", "\"${prop("statio.clavePublicaLicencia")}\"")
+        buildConfigField("String", "URL_PRIVACIDAD", "\"${prop("statio.urlPrivacidad")}\"")
     }
 
     signingConfigs {
@@ -52,7 +52,7 @@ android {
         debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
-            resValue("string", "app_name", prop("compas.nombreApp") + " (pruebas)")
+            resValue("string", "app_name", prop("statio.nombreApp") + " (pruebas)")
         }
         release {
             isMinifyEnabled = true

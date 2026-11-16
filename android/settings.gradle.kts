@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Compas"
+rootProject.name = "Statio"
 include(":core", ":app")

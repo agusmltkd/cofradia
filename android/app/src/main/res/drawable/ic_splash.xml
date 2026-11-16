@@ -1,8 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Statio: una S hecha de paradas que termina en el punto de horario fijo (rombo). Generado por marca/generar.py -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-    <path android:strokeColor="#1B1A17" android:strokeWidth="5" android:strokeLineCap="round"
-        android:pathData="M54,30 A24,24 0 1,1 31.2,46.6" />
-    <path android:strokeColor="#1B1A17" android:strokeWidth="5" android:strokeLineCap="round"
-        android:pathData="M54,54 L54,33" />
-    <path android:fillColor="#C8963E" android:pathData="M54,54m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0" />
+    <group android:translateX="0" android:translateY="0">
+        <path android:fillColor="#1B1A17" android:pathData="M70.0,36.0m-4.8,0a4.8,4.8 0,1 1,9.6,0a4.8,4.8 0,1 1,-9.6,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M62.89,29.1m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M52.32,28.33m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M42.3,31.75m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M38.1,40.86m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M44.91,48.59m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M54.84,52.48m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M64.54,56.84m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M69.99,65.41m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M65.53,74.69m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M55.68,78.44m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#1B1A17" android:pathData="M45.11,77.85m-3.4,0a3.4,3.4 0,1 1,6.8,0a3.4,3.4 0,1 1,-6.8,0" />
+        <path android:fillColor="#C8963E" android:pathData="M38,63.4L45.6,71L38,78.6L30.4,71Z" />
+    </group>
 </vector>

@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Compás · Panel</title>
+<title>Statio · Panel</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B1A17'/%3E%3Cpath d='M16 7a9 9 0 1 1-8.5 6' fill='none' stroke='%23F1ECE2' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M16 16V8' stroke='%23F1ECE2' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23D8A24A'/%3E%3C/svg%3E">
+<link rel="icon" href="../favicon.svg">
 <style>
 :root{
   --fondo:#F5F2EC;--sup:#FFFFFF;--sup2:#EDE8DF;--linea:#E0D9CD;--tinta:#1B1A17;--tinta2:#625C53;--tinta3:#958E83;
@@ -88,15 +88,16 @@ dialog::backdrop{background:rgb(0 0 0 / .45)}
 
 <script>
 // ===========================================================================
-// Compás · Panel de administración
+// Statio · Panel de administración
 // Un único archivo, sin build. Habla con Supabase usando la clave publicable;
 // lo que cada uno ve lo deciden las políticas RLS de la base de datos.
 // ===========================================================================
+// Símbolo de Statio: una S de paradas que acaba en el punto fijo (ver marca/).
 const SUPABASE_URL = "https://sujxkxghtwesotegfvth.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Y6RsOO1DkouE3ixhTCmA-A_Q6V8SwlJ";
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const MARCA = `<svg viewBox="0 0 32 32"><path d="M16 7a9 9 0 1 1-8.5 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M16 16V8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="16" r="3.2" fill="var(--acento)"/></svg>`;
+const MARCA = `<svg style="width:26px;height:26px" viewBox="26 28 58 58" aria-hidden="true"><circle cx="70.0" cy="36.0" r="4.8" fill="currentColor"/><circle cx="62.89" cy="29.1" r="3.4" fill="currentColor"/><circle cx="52.32" cy="28.33" r="3.4" fill="currentColor"/><circle cx="42.3" cy="31.75" r="3.4" fill="currentColor"/><circle cx="38.1" cy="40.86" r="3.4" fill="currentColor"/><circle cx="44.91" cy="48.59" r="3.4" fill="currentColor"/><circle cx="54.84" cy="52.48" r="3.4" fill="currentColor"/><circle cx="64.54" cy="56.84" r="3.4" fill="currentColor"/><circle cx="69.99" cy="65.41" r="3.4" fill="currentColor"/><circle cx="65.53" cy="74.69" r="3.4" fill="currentColor"/><circle cx="55.68" cy="78.44" r="3.4" fill="currentColor"/><circle cx="45.11" cy="77.85" r="3.4" fill="currentColor"/><path d="M38 63.4L45.6 71L38 78.6L30.4 71Z" fill="var(--acento,#D8A24A)"/></svg>`;
 
 const E = { usuario: null, superadmin: false, hermandades: [], hid: null, vista: "itinerarios", cache: {} };
 const $ = (s, r = document) => r.querySelector(s);
@@ -336,7 +337,7 @@ function pintarLogin(modo = "entrar", info = "") {
       <button class="b" data-modo="entrar">Volver a entrar</button>`,
   };
   $("#app").innerHTML = `<div class="login"><div class="tarjeta">
-    <div class="marca" style="padding:0 0 22px">${MARCA}<span>Compás · Panel</span></div>
+    <div class="marca" style="padding:0 0 22px">${MARCA}<span>Statio · Panel</span></div>
     ${vistas[modo]}<div id="errLogin" class="aviso grave" style="display:none;margin-top:14px"></div></div></div>`;
   document.querySelectorAll("[data-modo]").forEach((a) => a.addEventListener("click", (ev) => { ev.preventDefault(); pintarLogin(a.dataset.modo); }));
   const mostrar = (t) => { const el = $("#errLogin"); el.textContent = t; el.style.display = t ? "block" : "none"; };
@@ -387,7 +388,7 @@ function pintar() {
   $("#app").innerHTML = `
   <div class="marco">
     <aside>
-      <div class="marca">${MARCA}<span>Compás</span></div>
+      <div class="marca">${MARCA}<span>Statio</span></div>
       <div class="rotulo" style="padding:0 10px 6px">Hermandad</div>
       <div style="padding:0 6px 16px">
         ${E.hermandades.length ? `<select id="selH" style="width:100%">${E.hermandades.map((x) => `<option value="${x.id}" ${x.id === E.hid ? "selected" : ""}>${esc(x.nombre_corto || x.nombre)}</option>`).join("")}</select>` : `<div class="aviso">Ninguna asignada</div>`}
@@ -605,7 +606,7 @@ function dlgCodigo() {
 }
 function copiarCodigo(c) {
   const h = E.hermandades.find((x) => x.id === E.hid);
-  navigator.clipboard.writeText(`${h.nombre}: instala Compás desde Google Play y actívala con este código: ${c}`).then(() => toast("Mensaje copiado"));
+  navigator.clipboard.writeText(`${h.nombre}: instala Statio desde Google Play y actívala con este código: ${c}`).then(() => toast("Mensaje copiado"));
 }
 async function activarCodigo(id, si) { const { error } = await db.from("codigos").update({ activo: si }).eq("id", id); if (!fallo(error)) pintar(); }
 

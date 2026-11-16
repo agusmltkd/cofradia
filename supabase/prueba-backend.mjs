@@ -11,12 +11,12 @@ import { createPublicKey, verify } from "node:crypto";
 
 const props = Object.fromEntries(
   readFileSync(new URL("../android/gradle.properties", import.meta.url), "utf8")
-    .split("\n").filter((l) => /^compas\.\w+=/.test(l))
+    .split("\n").filter((l) => /^statio\.\w+=/.test(l))
     .map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1).trim()]),
 );
-const URL_BASE = props["compas.supabaseUrl"];
-const CLAVE = props["compas.supabaseKey"];
-const PUB = props["compas.clavePublicaLicencia"];
+const URL_BASE = props["statio.supabaseUrl"];
+const CLAVE = props["statio.supabaseKey"];
+const PUB = props["statio.clavePublicaLicencia"];
 const codigo = process.argv[2];
 if (!codigo) throw new Error("Falta el código");
 

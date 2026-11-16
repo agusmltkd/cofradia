@@ -1,5 +1,5 @@
 -- =====================================================================
--- Compás · esquema inicial
+-- Statio · esquema inicial
 --
 -- Quién hace qué:
 --   · superadmins   → tú. Das de alta hermandades, licencias y administradores.

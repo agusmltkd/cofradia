@@ -30,11 +30,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -51,25 +48,31 @@ import com.agusmltkd.compas.ui.componentes.RadioBoton
 import com.agusmltkd.compas.ui.componentes.Separador
 import com.agusmltkd.compas.ui.tema.Compas
 
-/** Marca: el arco del reloj y la línea del recorrido que acaba en el punto fijo. */
+/** Puntos del símbolo de Statio en una caja de 108 (los mismos que el icono; ver marca/puntos.py). */
+private val PuntosMarca = listOf(70.0f to 36.0f, 62.89f to 29.1f, 52.32f to 28.33f, 42.3f to 31.75f, 38.1f to 40.86f, 44.91f to 48.59f, 54.84f to 52.48f, 64.54f to 56.84f, 69.99f to 65.41f, 65.53f to 74.69f, 55.68f to 78.44f, 45.11f to 77.85f, 38f to 71f)
+
+/**
+ * Marca de Statio: una S hecha de paradas que termina en el punto de horario
+ * fijo (el rombo de color acento).
+ */
 @Composable
 fun Marca(tamano: Dp = 44.dp, tinta: Color = Compas.p.tinta, acento: Color = Compas.p.acento) {
     Canvas(Modifier.size(tamano)) {
-        val s = size.minDimension
-        val grosor = s * 0.09f
-        val r = s * 0.40f
-        val c = Offset(s / 2, s / 2)
-        drawArc(
-            color = tinta,
-            startAngle = -90f,
-            sweepAngle = 300f,
-            useCenter = false,
-            topLeft = Offset(c.x - r, c.y - r),
-            size = Size(r * 2, r * 2),
-            style = Stroke(width = grosor, cap = StrokeCap.Round),
+        // El símbolo ocupa x 30..80, y 28..86 de la caja de 108: lo encuadramos.
+        val k = size.minDimension / 58f
+        fun pos(x: Float, y: Float) = Offset((x - 26f) * k, (y - 28f) * k)
+        PuntosMarca.dropLast(1).forEachIndexed { i, (x, y) ->
+            drawCircle(tinta, radius = (if (i == 0) 4.8f else 3.4f) * k, center = pos(x, y))
+        }
+        val (fx, fy) = PuntosMarca.last()
+        val c = pos(fx, fy)
+        val s = 7.6f * k
+        drawPath(
+            androidx.compose.ui.graphics.Path().apply {
+                moveTo(c.x, c.y - s); lineTo(c.x + s, c.y); lineTo(c.x, c.y + s); lineTo(c.x - s, c.y); close()
+            },
+            acento,
         )
-        drawLine(tinta, c, Offset(c.x, c.y - r * 0.82f), strokeWidth = grosor, cap = StrokeCap.Round)
-        drawCircle(acento, radius = s * 0.11f, center = c)
     }
 }
 
@@ -98,7 +101,7 @@ fun PantallaActivacion(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Marca(36.dp)
             Spacer(Modifier.size(12.dp))
-            Text("Compás", style = Compas.t.subtitulo, color = p.tinta)
+            Text("Statio", style = Compas.t.subtitulo, color = p.tinta)
         }
         Spacer(Modifier.height(56.dp))
         Text("El horario de tu cofradía,\nal oído.", style = Compas.t.titulo.copy(fontSize = 32.sp, lineHeight = 38.sp), color = p.tinta)
