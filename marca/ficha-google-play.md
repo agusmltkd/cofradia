@@ -40,7 +40,7 @@ Política de privacidad: https://agusmltkd.github.io/cofradia/privacidad.html
 ## Recursos gráficos (carpeta marca/)
 - Icono 512×512: statio-play-512.png
 - Gráfico destacado 1024×500: statio-grafico-destacado-1024x500.png
-- Capturas de móvil: rama `capturas` del repo (docs/capturas), mínimo 2
+- Capturas de móvil (1080×1920, listas para Play): marca/play/statio-play-captura-1..5.png
 
 ## Contenido de la aplicación (respuestas)
 - Acceso: «Toda o parte de la funcionalidad está restringida» → instrucciones: en la primera pantalla, «Probar con una hermandad de ejemplo» abre la app completa sin código. Código de prueba alternativo: PRBA-2027.
