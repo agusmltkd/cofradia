@@ -1,0 +1,47 @@
+STATIO · «Tu cofradía, en hora» · vídeo vertical de 27 s
+==========================================================
+
+LOCUCIÓN PARA ELEVENLABS (pega solo el texto entre comillas, en este orden)
+
+0:00 – 0:03,5   Escena 1 · reloj
+  "Martes Santo. Las seis y veintiocho."
+
+0:03,5 – 0:07,5  Escena 2 · el problema
+  "El fiscal de tramo no puede ir mirando el móvil."
+
+0:07,5 – 0:12,5  Escena 3 · la app en vivo
+  "Con Statio, pulsa el botón de los auriculares..."
+
+0:12,5 – 0:17,5  Escena 4 · la voz
+  NO pongas locución aquí: deja que suene la voz de la propia app.
+  Graba con el móvil la frase real (modo ensayo → pulsar Escuchar) o, si
+  no la tienes aún, genera esta en una voz distinta y más neutra:
+  "Son las seis y veintiocho, y en tres minutos y veinticuatro segundos deberías estar en Plaza de la Merced."
+
+0:17,5 – 0:22,5  Escena 5 · el retraso
+  "¿Salís con retraso? Statio recalcula el recorrido para llegar en hora a la Campana."
+
+0:22,5 – 0:27    Escena 6 · cierre
+  "Statio. El horario de tu cofradía, al oído."
+
+
+CONSEJOS PARA ELEVENLABS
+- Voz masculina o femenina, castellano de España, tono sereno, nada de locutor de anuncio.
+- Estabilidad media-alta; velocidad normal. Si una frase no cabe en su escena,
+  pide «más rápido» solo en esa o recórtala.
+- Exporta cada frase por separado (MP3) y colócalas en CapCut en su minuto.
+- Recuerda: para publicarlo hace falta un plan de pago (licencia comercial).
+
+EN CAPCUT
+1. Importa statio-tu-cofradia-en-hora.mp4.
+2. Coloca cada audio en su minuto (arriba).
+3. Activa «Subtítulos automáticos» en español y elige un estilo sencillo
+   (blanco, sin caja), por si lo ven sin sonido.
+4. Exporta 1080 × 1920, 30 fps.
+
+TEXTO PARA LA PUBLICACIÓN
+Instagram / TikTok:
+  ¿Y si el fiscal supiera en todo momento dónde tiene que estar su tramo, sin sacar el móvil?
+  Statio: el horario de tu cofradía, al oído. 🎧
+  ¿Tu hermandad la quiere probar? Escríbenos.
+  #SemanaSanta #Sevilla #Cofradías #Hermandades #DiputadoDeTramo #Statio
