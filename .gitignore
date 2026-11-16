@@ -19,3 +19,4 @@ node_modules/
 # Sistema
 .DS_Store
 marca/video/salida/
+__pycache__/
