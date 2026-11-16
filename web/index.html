@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compás · El horario de tu cofradía, al oído</title>
+<meta name="description" content="Compás le dice a cada fiscal dónde tiene que estar su sección en cada momento de la estación de penitencia. Con el botón de los auriculares.">
+<style>
+:root{--fondo:#0E0E0D;--sup:#171614;--linea:#2D2A26;--tinta:#F1ECE2;--tinta2:#A69F93;--tinta3:#6E685F;--acento:#D8A24A;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{margin:0;background:var(--fondo);color:var(--tinta);line-height:1.5}
+.c{max-width:980px;margin:0 auto;padding:0 20px}
+header{display:flex;align-items:center;gap:10px;padding:22px 0;font-weight:600}
+header svg{width:28px;height:28px}
+header a{margin-left:auto;color:var(--tinta2);text-decoration:none;font-weight:500}
+h1{font-size:clamp(36px,6vw,60px);line-height:1.04;letter-spacing:-.025em;margin:72px 0 18px;max-width:14ch}
+.lead{font-size:19px;color:var(--tinta2);max-width:52ch;margin:0 0 36px}
+.reloj{font-size:clamp(56px,10vw,104px);font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:48px 0 6px}
+.sig{border:1px solid var(--linea);background:var(--sup);border-radius:18px;padding:22px;max-width:440px}
+.rot{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta3)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;margin:96px 0}
+.grid h3{font-size:17px;margin:10px 0 6px}
+.grid p{color:var(--tinta2);margin:0}
+footer{border-top:1px solid var(--linea);padding:24px 0 48px;color:var(--tinta3);font-size:14px;display:flex;gap:18px;flex-wrap:wrap}
+footer a{color:var(--tinta2)}
+</style>
+</head>
+<body>
+<div class="c">
+  <header><svg viewBox="0 0 32 32"><path d="M16 7a9 9 0 1 1-8.5 6" fill="none" stroke="#F1ECE2" stroke-width="2.6" stroke-linecap="round"/><path d="M16 16V8" stroke="#F1ECE2" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="16" r="3.2" fill="#D8A24A"/></svg>Compás<a href="panel/">Panel de hermandades</a></header>
+
+  <h1>El horario de tu cofradía, al oído.</h1>
+  <p class="lead">Cada fiscal pulsa el botón de sus auriculares y escucha la hora y dónde tiene que estar su sección. Si se sale con retraso, Compás recalcula el recorrido para llegar a la carrera oficial en hora.</p>
+
+  <div class="reloj" id="r">20:14:26</div>
+  <div class="sig">
+    <div class="rot">Siguiente</div>
+    <div style="font-size:24px;font-weight:600;margin:6px 0 14px">Laraña · Orfila</div>
+    <div style="display:flex;justify-content:space-between;align-items:end">
+      <div><div class="rot">A las</div><div style="font-size:30px;font-weight:600;font-variant-numeric:tabular-nums">20:15</div></div>
+      <div style="text-align:right"><div class="rot">Faltan</div><div style="font-size:30px;font-weight:600;font-variant-numeric:tabular-nums">0:34</div></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div><div class="rot">01</div><h3>Con la pantalla apagada</h3><p>Una pulsación: hora y siguiente punto. Dos: los dos próximos. Y si quieres, avisa sola antes de cada punto.</p></div>
+    <div><div class="rot">02</div><h3>Sin cobertura</h3><p>En Semana Santa la red se satura. Compás funciona 30 días sin conexión.</p></div>
+    <div><div class="rot">03</div><h3>Retrasos con cabeza</h3><p>Recupera el tiempo comiéndose parones, no corriendo, y avisa cuando ya no se llega a la carrera oficial.</p></div>
+    <div><div class="rot">04</div><h3>Para cada hermandad</h3><p>Itinerarios, secciones y accesos se gestionan desde un panel web. Se importan desde Excel.</p></div>
+  </div>
+
+  <footer><span>© 2026 Compás</span><a href="privacidad.html">Política de privacidad</a><a href="panel/">Panel</a></footer>
+</div>
+</body>
+</html>

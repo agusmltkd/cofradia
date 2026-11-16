@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compás · Panel</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B1A17'/%3E%3Cpath d='M16 7a9 9 0 1 1-8.5 6' fill='none' stroke='%23F1ECE2' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M16 16V8' stroke='%23F1ECE2' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23D8A24A'/%3E%3C/svg%3E">
+<style>
+:root{
+  --fondo:#F5F2EC;--sup:#FFFFFF;--sup2:#EDE8DF;--linea:#E0D9CD;--tinta:#1B1A17;--tinta2:#625C53;--tinta3:#958E83;
+  --acento:#9C6A17;--bien:#2E7A4F;--mal:#B4462C;--radio:12px;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --fondo:#0E0E0D;--sup:#171614;--sup2:#211F1C;--linea:#2D2A26;--tinta:#F1ECE2;--tinta2:#A69F93;--tinta3:#6E685F;
+  --acento:#D8A24A;--bien:#7DB894;--mal:#E5836A;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.num,table td.h,input.h{font-variant-numeric:tabular-nums}
+a{color:inherit}
+.marco{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--linea);padding:20px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+main{padding:28px 36px 60px;max-width:1180px;width:100%}
+.marca{display:flex;align-items:center;gap:10px;font-weight:600;padding:4px 8px 20px}
+.marca svg{width:26px;height:26px}
+.rotulo{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta3)}
+nav button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--tinta2);padding:8px 10px;border-radius:8px;font:inherit;cursor:pointer}
+nav button:hover{background:var(--sup2)}
+nav button.on{background:var(--sup);color:var(--tinta);box-shadow:inset 0 0 0 1px var(--linea)}
+h1{font-size:26px;font-weight:600;letter-spacing:-.01em;margin:4px 0 4px}
+h2{font-size:17px;font-weight:600;margin:0}
+p.sub{color:var(--tinta2);margin:0 0 24px}
+.tarjeta{background:var(--sup);border:1px solid var(--linea);border-radius:16px;padding:18px}
+.fila{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.esp{flex:1}
+.pestanas{display:flex;gap:4px;background:var(--sup2);padding:4px;border-radius:12px;margin:0 0 20px;width:fit-content;flex-wrap:wrap}
+.pestanas button{border:0;background:none;padding:7px 14px;border-radius:9px;font:inherit;color:var(--tinta2);cursor:pointer}
+.pestanas button.on{background:var(--sup);color:var(--tinta);box-shadow:0 0 0 1px var(--linea)}
+button.b,a.b{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--linea);background:var(--sup);color:var(--tinta);font:inherit;font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap}
+button.b:hover{border-color:var(--tinta3)}
+button.p{background:var(--tinta);color:var(--fondo);border-color:var(--tinta)}
+button.peligro{color:var(--mal)}
+button.mini{height:30px;padding:0 10px;font-size:13px}
+button:disabled{opacity:.5;cursor:default}
+input,select,textarea{font:inherit;color:var(--tinta);background:var(--sup);border:1px solid var(--linea);border-radius:9px;padding:8px 10px;min-width:0}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acento);outline-offset:-1px;border-color:transparent}
+label.campo{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--tinta2)}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--linea);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--linea);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.pastilla{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--tinta2)}
+.pastilla:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c,var(--tinta3))}
+.codigo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px;letter-spacing:.06em}
+.vacio{color:var(--tinta2);padding:28px;text-align:center}
+.aviso{padding:10px 12px;border-radius:10px;background:var(--sup2);color:var(--tinta2);font-size:14px;margin:6px 0}
+.aviso.grave{color:var(--mal)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--tinta);color:var(--fondo);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+.toast.v{opacity:1}
+.editor{overflow:auto;max-height:65vh;border:1px solid var(--linea);border-radius:12px}
+.editor table{min-width:900px}
+.editor th{position:sticky;top:0;background:var(--sup);z-index:1}
+.editor td{padding:4px 6px}
+.editor input{width:100%;padding:6px 8px;border-color:transparent;background:transparent}
+.editor input:hover{border-color:var(--linea)}
+.editor input.h{width:72px;text-align:center}
+.editor input.m{width:56px;text-align:center}
+.editor input.est{color:var(--tinta3);font-style:italic}
+.editor tr.fijo td{background:color-mix(in srgb,var(--acento) 9%,transparent)}
+dialog{border:1px solid var(--linea);border-radius:16px;background:var(--sup);color:var(--tinta);padding:22px;max-width:520px;width:calc(100% - 32px)}
+dialog::backdrop{background:rgb(0 0 0 / .45)}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px}
+.login .tarjeta{max-width:400px;width:100%}
+@media (max-width:820px){.marco{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--linea)}main{padding:20px 16px 48px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+<dialog id="dlg"></dialog>
+
+<script>
+// ===========================================================================
+// Compás · Panel de administración
+// Un único archivo, sin build. Habla con Supabase usando la clave publicable;
+// lo que cada uno ve lo deciden las políticas RLS de la base de datos.
+// ===========================================================================
+const SUPABASE_URL = "https://sujxkxghtwesotegfvth.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Y6RsOO1DkouE3ixhTCmA-A_Q6V8SwlJ";
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const MARCA = `<svg viewBox="0 0 32 32"><path d="M16 7a9 9 0 1 1-8.5 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M16 16V8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="16" r="3.2" fill="var(--acento)"/></svg>`;
+
+const E = { usuario: null, superadmin: false, hermandades: [], hid: null, vista: "itinerarios", cache: {} };
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("v"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("v"), 2600); }
+function fallo(error) { if (error) { console.error(error); toast("Error: " + (error.message || error)); return true; } return false; }
+
+// ---------------------------------------------------------------- tiempo
+const fmtHora = (m) => { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); };
+const parseHora = (t) => { const r = /^\s*(\d{1,2})[:.h](\d{2})\s*$/.exec(String(t ?? "")); if (!r) return null; const h = +r[1], m = +r[2]; return h > 47 || m > 59 ? null : h * 60 + m; };
+const fmtFecha = (s) => s ? new Date(s).toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" }) : "—";
+const slug = (s) => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+
+// ---------------------------------------------------------------- modelo
+/** Itinerario (datos) → tabla editable: una fila por punto, hora y parón por sección. */
+function aTabla(datos) {
+  const filas = datos.puntos.map((p) => ({ nombre: p.nombre, ancla: !!p.ancla, nota: p.nota || "", voz: p.voz || "", s: {} }));
+  for (const s of datos.secciones) {
+    let t = s.salida;
+    filas[0].s[s.id] = { hora: t, paron: null, estimado: false };
+    s.tramos.forEach((tr, i) => { t += tr.andar + tr.paron; filas[i + 1].s[s.id] = { hora: t, paron: tr.paron, estimado: !!tr.estimado }; });
+  }
+  return { secciones: datos.secciones.map((s) => ({ id: s.id, nombre: s.nombre })), filas };
+}
+/** Tabla → datos. El parón de la fila i es el tiempo parado en el tramo que llega a ese punto. */
+function deTabla(tabla) {
+  const puntos = tabla.filas.map((f, i) => {
+    const p = { id: String(i).padStart(2, "0") + "-" + (slug(f.nombre) || "punto"), nombre: f.nombre.trim(), ancla: !!f.ancla };
+    if (f.nota?.trim()) p.nota = f.nota.trim();
+    if (f.voz?.trim()) p.voz = f.voz.trim();
+    return p;
+  });
+  const secciones = tabla.secciones.map((s) => {
+    const horas = [];
+    let suma = 0, prev = null;
+    for (const f of tabla.filas) {
+      let h = f.s[s.id]?.hora;
+      if (h == null) throw new Error(`Falta la hora de «${s.nombre}» en «${f.nombre}»`);
+      h += suma;
+      if (prev != null && h < prev - 600) { suma += 1440; h += 1440; } // cruza la medianoche
+      horas.push(h); prev = h;
+    }
+    const tramos = [];
+    for (let i = 1; i < horas.length; i++) {
+      const total = horas[i] - horas[i - 1];
+      if (total < 0) throw new Error(`«${s.nombre}» llega a «${tabla.filas[i].nombre}» antes que al punto anterior`);
+      const celda = tabla.filas[i].s[s.id] || {};
+      const vacio = celda.paron == null || celda.paron === "";
+      const paron = vacio ? Math.round(total * 0.35) : Math.min(total, Math.max(0, +celda.paron));
+      const estimado = vacio || celda.estimado === true;
+      tramos.push(estimado ? { andar: total - paron, paron, estimado: true } : { andar: total - paron, paron });
+    }
+    return { id: s.id, nombre: s.nombre, salida: horas[0], tramos };
+  });
+  return { puntos, secciones };
+}
+/** Mismas reglas que la app (core/Validacion.kt). */
+function validar(d) {
+  const out = [];
+  const g = (t) => out.push({ grave: true, t }), l = (t) => out.push({ grave: false, t });
+  if (d.puntos.length < 2) g("El itinerario necesita al menos dos puntos.");
+  if (!d.secciones.length) g("No hay ninguna sección.");
+  if (d.puntos[0]?.ancla) g("La salida no puede ser un punto de horario fijo.");
+  if (!d.puntos.some((p) => p.ancla)) l("No hay ningún punto de horario fijo (Campana, Catedral…): el recálculo apuntará al último punto.");
+  const vistos = {};
+  d.puntos.forEach((p) => { const k = p.nombre.toLowerCase(); if (vistos[k]) l(`Hay varios puntos llamados «${p.nombre}». Añade algo que los distinga (ida/vuelta).`); vistos[k] = 1; if (!p.nombre) g("Hay un punto sin nombre."); });
+  for (const s of d.secciones) {
+    if (s.tramos.length !== d.puntos.length - 1) g(`«${s.nombre}»: número de tramos incorrecto.`);
+    s.tramos.forEach((t, i) => { if (t.andar + t.paron > 90) l(`«${s.nombre}»: más de hora y media hasta ${d.puntos[i + 1].nombre}.`); });
+    if (s.tramos.some((t) => t.estimado)) l(`«${s.nombre}»: hay parones sin rellenar; se estiman al 35% del tramo. Revísalos con el capataz.`);
+  }
+  return out;
+}
+const vacioDatos = () => ({
+  puntos: [{ id: "00-salida", nombre: "Salida", ancla: false }, { id: "01-campana", nombre: "Campana (palquillo)", ancla: true }, { id: "02-entrada", nombre: "Entrada", ancla: false }],
+  secciones: [{ id: "cruz", nombre: "Cruz de guía", salida: 18 * 60, tramos: [{ andar: 60, paron: 30 }, { andar: 120, paron: 60 }] }],
+});
+
+// ---------------------------------------------------------------- Excel
+const CAB_PUNTO = "Punto", CAB_FIJO = "Horario fijo", CAB_NOTA = "Nota", CAB_VOZ = "Pronunciación";
+function descargarPlantilla(tabla, nombre = "plantilla-itinerario") {
+  tabla = tabla || aTabla(vacioDatos());
+  const cab = [CAB_PUNTO, CAB_FIJO, CAB_NOTA, CAB_VOZ];
+  tabla.secciones.forEach((s) => cab.push(`${s.nombre} · hora`, `${s.nombre} · parón (min)`));
+  const filas = tabla.filas.map((f, i) => {
+    const r = [f.nombre, f.ancla ? "sí" : "", f.nota, f.voz];
+    tabla.secciones.forEach((s) => { const c = f.s[s.id] || {}; r.push(fmtHora(c.hora ?? 0), i === 0 || c.estimado || c.paron == null ? "" : c.paron); });
+    return r;
+  });
+  const ayuda = [
+    ["Cómo rellenar la plantilla"], [""],
+    ["· Una fila por punto del recorrido, en orden, empezando por la salida."],
+    ["· «Horario fijo»: escribe «sí» en los puntos innegociables (palquillo de la Campana, Catedral…). Nunca en la salida."],
+    ["· Por cada sección (cruz de guía, cada paso…) hay dos columnas: la HORA de paso (20:15) y los MINUTOS PARADO en el tramo que llega a ese punto."],
+    ["· Si no sabes los minutos parado, déjalos en blanco: se estimarán y la app avisará de que son estimados."],
+    ["· Pasada la medianoche puedes escribir 00:30 o 24:30; las dos valen."],
+    ["· «Pronunciación» es opcional: cómo quieres que lo diga la voz si el nombre escrito no suena bien."],
+    ["· Para añadir una sección, copia las dos columnas de otra y cambia el nombre antes de « · »."],
+  ];
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([cab, ...filas]);
+  ws["!cols"] = cab.map((c, i) => ({ wch: i === 0 ? 38 : i < 4 ? 14 : 18 }));
+  XLSX.utils.book_append_sheet(wb, ws, "Itinerario");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(ayuda), "Instrucciones");
+  XLSX.writeFile(wb, nombre + ".xlsx");
+}
+function leerExcel(archivo) {
+  return archivo.arrayBuffer().then((buf) => {
+    const wb = XLSX.read(buf, { cellDates: false });
+    const ws = wb.Sheets["Itinerario"] || wb.Sheets[wb.SheetNames[0]];
+    const filas = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: "" });
+    const cab = filas[0].map((c) => String(c).trim());
+    const iP = cab.indexOf(CAB_PUNTO);
+    if (iP < 0) throw new Error(`Falta la columna «${CAB_PUNTO}». Usa la plantilla.`);
+    const secciones = [];
+    cab.forEach((c, i) => {
+      const m = /^(.*)\s·\shora$/i.exec(c);
+      if (m) { const nombre = m[1].trim(); secciones.push({ id: slug(nombre) || "s" + i, nombre, iH: i, iP: cab.findIndex((x) => x.toLowerCase().startsWith(nombre.toLowerCase() + " · par")) }); }
+    });
+    if (!secciones.length) throw new Error("No encuentro columnas «… · hora». Usa la plantilla.");
+    const tabla = { secciones: secciones.map(({ id, nombre }) => ({ id, nombre })), filas: [] };
+    for (const r of filas.slice(1)) {
+      const nombre = String(r[iP] ?? "").trim();
+      if (!nombre) continue;
+      const f = { nombre, ancla: /^(s[ií]|x|1|true)$/i.test(String(r[cab.indexOf(CAB_FIJO)] ?? "").trim()), nota: r[cab.indexOf(CAB_NOTA)] ?? "", voz: r[cab.indexOf(CAB_VOZ)] ?? "", s: {} };
+      for (const s of secciones) {
+        let crudo = r[s.iH];
+        // Excel puede devolver la hora como fracción de día (0.8541…)
+        if (/^\d*\.\d+$/.test(String(crudo))) { const m = Math.round(parseFloat(crudo) * 1440); crudo = fmtHora(m); }
+        const hora = parseHora(crudo);
+        if (hora == null) throw new Error(`Hora no válida en «${nombre}» / ${s.nombre}: «${crudo}»`);
+        const pa = s.iP >= 0 ? String(r[s.iP] ?? "").trim() : "";
+        f.s[s.id] = { hora, paron: pa === "" ? null : +pa };
+      }
+      tabla.filas.push(f);
+    }
+    return tabla;
+  });
+}
+
+// ---------------------------------------------------------------- arranque
+async function iniciar() {
+  const { data } = await db.auth.getSession();
+  E.usuario = data.session?.user ?? null;
+  db.auth.onAuthStateChange((_ev, s) => { const antes = E.usuario?.id; E.usuario = s?.user ?? null; if (antes !== E.usuario?.id) cargar(); });
+  cargar();
+}
+
+async function cargar() {
+  if (!E.usuario) return pintarLogin();
+  const [{ data: su }, { data: hs, error }] = await Promise.all([
+    db.from("superadmins").select("email").maybeSingle(),
+    db.from("hermandades").select("*").order("nombre"),
+  ]);
+  if (fallo(error)) return;
+  E.superadmin = !!su;
+  E.hermandades = hs || [];
+  if (!E.hermandades.find((h) => h.id === E.hid)) E.hid = E.hermandades[0]?.id ?? null;
+  pintar();
+}
+
+function pintarLogin(enviado) {
+  $("#app").innerHTML = `
+  <div class="login"><div class="tarjeta">
+    <div class="marca" style="padding:0 0 22px">${MARCA}<span>Compás · Panel</span></div>
+    ${enviado ? `<h2>Revisa tu correo</h2><p class="sub" style="margin-top:8px">Te hemos enviado un enlace a <b>${esc(enviado)}</b>. Ábrelo en este mismo navegador para entrar.</p>
+      <button class="b" onclick="pintarLogin()">Usar otro correo</button>`
+    : `<h2>Entrar</h2><p class="sub" style="margin-top:6px">Para administradores de hermandad. Te enviaremos un enlace de acceso, sin contraseña.</p>
+      <form id="fl" class="fila" style="flex-direction:column;align-items:stretch;gap:12px">
+        <input type="email" name="email" required placeholder="correo@ejemplo.com" autocomplete="email">
+        <button class="b p" style="justify-content:center">Enviarme el enlace</button>
+      </form>`}
+  </div></div>`;
+  $("#fl")?.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const email = new FormData(ev.target).get("email").trim().toLowerCase();
+    const { error } = await db.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: true } });
+    if (!fallo(error)) pintarLogin(email);
+  });
+}
+
+// ---------------------------------------------------------------- estructura
+const VISTAS = [
+  ["itinerarios", "Itinerarios"], ["codigos", "Códigos de acceso"], ["dispositivos", "Móviles"], ["hermandad", "Datos de la hermandad"],
+];
+const VISTAS_SUPER = [["licencias", "Licencias"], ["admins", "Administradores"]];
+
+function pintar() {
+  const h = E.hermandades.find((x) => x.id === E.hid);
+  const vistas = E.superadmin ? [...VISTAS, ...VISTAS_SUPER] : VISTAS;
+  $("#app").innerHTML = `
+  <div class="marco">
+    <aside>
+      <div class="marca">${MARCA}<span>Compás</span></div>
+      <div class="rotulo" style="padding:0 10px 6px">Hermandad</div>
+      <div style="padding:0 6px 16px">
+        ${E.hermandades.length ? `<select id="selH" style="width:100%">${E.hermandades.map((x) => `<option value="${x.id}" ${x.id === E.hid ? "selected" : ""}>${esc(x.nombre_corto || x.nombre)}</option>`).join("")}</select>` : `<div class="aviso">Ninguna asignada</div>`}
+        ${E.superadmin ? `<button class="b mini" style="margin-top:8px;width:100%;justify-content:center" onclick="dlgHermandad()">+ Nueva hermandad</button>` : ""}
+      </div>
+      <nav>${h ? vistas.map(([k, t]) => `<button data-v="${k}" class="${E.vista === k ? "on" : ""}">${t}</button>`).join("") : ""}</nav>
+      <div style="padding:22px 10px 0;font-size:13px;color:var(--tinta3)">
+        ${esc(E.usuario.email)}${E.superadmin ? " · superadmin" : ""}<br>
+        <a href="#" onclick="db.auth.signOut();return false">Cerrar sesión</a>
+      </div>
+    </aside>
+    <main id="main">${h ? "" : `<h1>Sin hermandades</h1><p class="sub">${E.superadmin ? "Crea la primera con «Nueva hermandad»." : "Tu correo no está dado de alta como administrador de ninguna hermandad. Pídeselo a quien te dio acceso."}</p>`}</main>
+  </div>`;
+  $("#selH")?.addEventListener("change", (e) => { E.hid = e.target.value; pintar(); });
+  document.querySelectorAll("nav button").forEach((b) => b.addEventListener("click", () => { E.vista = b.dataset.v; pintar(); }));
+  if (h) ({ itinerarios: vItinerarios, codigos: vCodigos, dispositivos: vDispositivos, hermandad: vHermandad, licencias: vLicencias, admins: vAdmins }[E.vista] || vItinerarios)(h);
+}
+
+function abrirDialogo(html, alEnviar) {
+  const d = $("#dlg");
+  d.innerHTML = html;
+  d.showModal();
+  d.querySelector("[data-cerrar]")?.addEventListener("click", () => d.close());
+  d.querySelector("form")?.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const ok = await alEnviar(Object.fromEntries(new FormData(ev.target)));
+    if (ok !== false) d.close();
+  });
+}
+
+// ---------------------------------------------------------------- itinerarios
+async function vItinerarios(h) {
+  const m = $("#main");
+  const { data: its, error } = await db.from("itinerarios").select("id,nombre,orden,publicado,version,actualizado,actualizado_por,datos").eq("hermandad_id", h.id).order("orden");
+  if (fallo(error)) return;
+  E.cache.its = its;
+  m.innerHTML = `
+    <div class="fila"><div><div class="rotulo">${esc(h.nombre)}</div><h1>Itinerarios</h1></div><div class="esp"></div>
+      <button class="b" onclick="descargarPlantilla()">Descargar plantilla Excel</button>
+      <label class="b" style="cursor:pointer">Importar Excel<input type="file" accept=".xlsx,.xls,.csv" hidden id="fx"></label>
+      <button class="b p" onclick="nuevoItinerario()">+ Nuevo</button></div>
+    <p class="sub">Solo los itinerarios <b>publicados</b> llegan a los móviles, la próxima vez que sincronicen con cobertura.</p>
+    <div class="tarjeta" style="padding:6px 8px">
+    ${its.length ? `<table><thead><tr><th>Nombre</th><th>Puntos</th><th>Secciones</th><th>Estado</th><th>Última edición</th><th></th></tr></thead><tbody>
+      ${its.map((it) => {
+        const inc = validar(it.datos);
+        return `<tr>
+          <td><b>${esc(it.nombre)}</b> <span style="color:var(--tinta3)">v${it.version}</span></td>
+          <td class="num">${it.datos.puntos.length}</td>
+          <td>${it.datos.secciones.map((s) => esc(s.nombre)).join(", ")}</td>
+          <td>${it.publicado ? `<span class="pastilla" style="--c:var(--bien)">Publicado</span>` : `<span class="pastilla">Borrador</span>`}
+              ${inc.some((x) => x.grave) ? `<span class="pastilla" style="--c:var(--mal)">con errores</span>` : ""}</td>
+          <td style="color:var(--tinta2);font-size:13px">${fmtFecha(it.actualizado)}<br>${esc(it.actualizado_por || "")}</td>
+          <td style="text-align:right;white-space:nowrap">
+            <button class="b mini" onclick="editarItinerario('${it.id}')">Editar</button>
+            <button class="b mini" onclick="publicar('${it.id}',${!it.publicado})">${it.publicado ? "Retirar" : "Publicar"}</button>
+            <button class="b mini" onclick="exportarItinerario('${it.id}')">Excel</button>
+          </td></tr>`;
+      }).join("")}</tbody></table>` : `<div class="vacio">Aún no hay itinerarios. Descarga la plantilla, rellénala e impórtala, o crea uno a mano.</div>`}
+    </div>`;
+  $("#fx").addEventListener("change", async (ev) => {
+    const f = ev.target.files[0]; if (!f) return;
+    try {
+      const tabla = await leerExcel(f);
+      abrirEditor(h, { nombre: f.name.replace(/\.\w+$/, ""), tabla, nuevo: true });
+    } catch (e) { toast(e.message); }
+  });
+}
+function nuevoItinerario() { abrirEditor(E.hermandades.find((x) => x.id === E.hid), { nombre: "Itinerario oficial", tabla: aTabla(vacioDatos()), nuevo: true }); }
+function editarItinerario(id) { const it = E.cache.its.find((x) => x.id === id); abrirEditor(E.hermandades.find((x) => x.id === E.hid), { id, nombre: it.nombre, tabla: aTabla(it.datos), publicado: it.publicado }); }
+function exportarItinerario(id) { const it = E.cache.its.find((x) => x.id === id); descargarPlantilla(aTabla(it.datos), slug(it.nombre)); }
+async function publicar(id, si) {
+  const it = E.cache.its.find((x) => x.id === id);
+  if (si && validar(it.datos).some((x) => x.grave)) return toast("Corrige los errores antes de publicar.");
+  const { error } = await db.from("itinerarios").update({ publicado: si }).eq("id", id);
+  if (!fallo(error)) { toast(si ? "Publicado. Llegará a los móviles al sincronizar." : "Retirado de los móviles."); pintar(); }
+}
+
+function abrirEditor(h, ed) {
+  E.ed = ed;
+  const m = $("#main");
+  const t = ed.tabla;
+  m.innerHTML = `
+    <div class="fila"><button class="b mini" onclick="pintar()">‹ Itinerarios</button></div>
+    <div class="fila" style="margin:14px 0 6px">
+      <input id="edNombre" value="${esc(ed.nombre)}" style="font-size:22px;font-weight:600;flex:1;min-width:240px">
+      <button class="b" onclick="edSeccion()">+ Sección</button>
+      <button class="b" onclick="edFila()">+ Punto</button>
+      <button class="b p" onclick="edGuardar()">Guardar</button>
+      ${ed.id ? `<button class="b peligro" onclick="edBorrar()">Borrar</button>` : ""}
+    </div>
+    <p class="sub">Hora de paso de cada sección por cada punto y minutos parado en el tramo que llega a él. Si dejas el parón en blanco se estima. Marca los puntos de <b>horario fijo</b>.</p>
+    <div id="edAvisos"></div>
+    <div class="editor"><table><thead><tr><th style="width:34px">#</th><th style="min-width:240px">Punto</th><th>Fijo</th><th style="min-width:160px">Nota</th>
+      ${t.secciones.map((s, k) => `<th colspan="2"><input value="${esc(s.nombre)}" data-sec="${k}" style="font-weight:600;padding:4px 6px;width:150px">
+        ${t.secciones.length > 1 ? `<button class="b mini" title="Quitar sección" onclick="edQuitarSeccion(${k})">×</button>` : ""}<br><span style="font-weight:500">hora · parón</span></th>`).join("")}
+      <th></th></tr></thead><tbody>
+      ${t.filas.map((f, i) => `<tr class="${f.ancla ? "fijo" : ""}">
+        <td class="num" style="color:var(--tinta3)">${i}</td>
+        <td><input value="${esc(f.nombre)}" data-f="${i}" data-k="nombre"></td>
+        <td style="text-align:center"><input type="checkbox" ${f.ancla ? "checked" : ""} data-f="${i}" data-k="ancla" ${i === 0 ? "disabled" : ""} style="width:auto"></td>
+        <td><input value="${esc(f.nota)}" data-f="${i}" data-k="nota" placeholder="—"></td>
+        ${t.secciones.map((s) => { const c = f.s[s.id] || {}; return `
+          <td><input class="h" value="${c.hora != null ? fmtHora(c.hora) : ""}" data-f="${i}" data-s="${s.id}" data-k="hora"></td>
+          <td><input class="m num ${c.estimado ? "est" : ""}" title="${c.estimado ? "Estimado: revísalo con el capataz" : ""}" value="${i === 0 || c.paron == null ? "" : c.paron}" ${i === 0 ? "disabled" : ""} placeholder="${i === 0 ? "" : "~"}" data-f="${i}" data-s="${s.id}" data-k="paron"></td>`; }).join("")}
+        <td style="white-space:nowrap"><button class="b mini" onclick="edFila(${i})" title="Insertar debajo">+</button> <button class="b mini" onclick="edQuitarFila(${i})" title="Quitar">×</button></td>
+      </tr>`).join("")}
+    </tbody></table></div>`;
+  m.querySelectorAll("[data-f]").forEach((el) => el.addEventListener("change", () => {
+    const f = t.filas[+el.dataset.f], k = el.dataset.k;
+    if (el.dataset.s) {
+      const c = (f.s[el.dataset.s] ||= {});
+      if (k === "hora") { const v = parseHora(el.value); if (v == null) { toast("Hora no válida. Usa 20:15"); el.value = c.hora != null ? fmtHora(c.hora) : ""; return; } c.hora = v; el.value = fmtHora(v); }
+      else { c.paron = el.value === "" ? null : Math.max(0, Math.round(+el.value)); c.estimado = el.value === ""; el.classList.toggle("est", c.estimado); el.title = ""; }
+    } else if (k === "ancla") { f.ancla = el.checked; el.closest("tr").classList.toggle("fijo", el.checked); }
+    else f[k] = el.value;
+    edValidar();
+  }));
+  m.querySelectorAll("[data-sec]").forEach((el) => el.addEventListener("change", () => { t.secciones[+el.dataset.sec].nombre = el.value.trim() || "Sección"; }));
+  edValidar();
+}
+function edValidar() {
+  let html = "";
+  try { const inc = validar(deTabla(E.ed.tabla)); html = inc.map((x) => `<div class="aviso ${x.grave ? "grave" : ""}">${esc(x.t)}</div>`).join(""); }
+  catch (e) { html = `<div class="aviso grave">${esc(e.message)}</div>`; }
+  $("#edAvisos").innerHTML = html;
+}
+function edFila(i) {
+  const t = E.ed.tabla; i = i ?? t.filas.length - 1;
+  const base = t.filas[i];
+  const nueva = { nombre: "Nuevo punto", ancla: false, nota: "", voz: "", s: {} };
+  t.secciones.forEach((s) => { nueva.s[s.id] = { hora: (base?.s[s.id]?.hora ?? 1080) + 5, paron: null }; });
+  t.filas.splice(i + 1, 0, nueva);
+  abrirEditor(null, E.ed);
+}
+function edQuitarFila(i) { if (E.ed.tabla.filas.length <= 2) return toast("Hacen falta al menos dos puntos."); E.ed.tabla.filas.splice(i, 1); abrirEditor(null, E.ed); }
+function edSeccion() {
+  const t = E.ed.tabla, nombre = prompt("Nombre de la sección (p. ej. Paso de palio):"); if (!nombre) return;
+  let id = slug(nombre) || "seccion"; while (t.secciones.some((s) => s.id === id)) id += "-2";
+  const ref = t.secciones[t.secciones.length - 1];
+  t.secciones.push({ id, nombre });
+  t.filas.forEach((f) => { f.s[id] = { hora: (f.s[ref.id]?.hora ?? 1080) + 25, paron: f.s[ref.id]?.paron ?? null, estimado: f.s[ref.id]?.estimado }; });
+  abrirEditor(null, E.ed);
+}
+function edQuitarSeccion(k) { if (!confirm("¿Quitar esta sección?")) return; E.ed.tabla.secciones.splice(k, 1); abrirEditor(null, E.ed); }
+async function edGuardar() {
+  let datos;
+  try { datos = deTabla(E.ed.tabla); } catch (e) { return toast(e.message); }
+  const inc = validar(datos);
+  const nombre = $("#edNombre").value.trim() || "Itinerario";
+  if (inc.some((x) => x.grave) && E.ed.publicado) return toast("Tiene errores: corrígelos o retíralo antes de guardar.");
+  const fila = { nombre, datos };
+  const q = E.ed.id
+    ? db.from("itinerarios").update(fila).eq("id", E.ed.id).select("id").single()
+    : db.from("itinerarios").insert({ ...fila, hermandad_id: E.hid, orden: (E.cache.its?.length || 0) }).select("id").single();
+  const { data, error } = await q;
+  if (fallo(error)) return;
+  E.ed.id = data.id; E.ed.nombre = nombre;
+  toast(E.ed.publicado ? "Guardado. Los móviles lo recibirán al sincronizar." : "Guardado como borrador. Publícalo cuando esté listo.");
+}
+async function edBorrar() {
+  if (!confirm("¿Borrar este itinerario? No se puede deshacer.")) return;
+  const { error } = await db.from("itinerarios").delete().eq("id", E.ed.id);
+  if (!fallo(error)) { toast("Borrado."); pintar(); }
+}
+
+// ---------------------------------------------------------------- códigos
+const ROLES = { diputado_mayor: "Diputado Mayor de Gobierno", fiscal: "Fiscal", consulta: "Solo consulta" };
+function codigoAleatorio() { const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; const b = crypto.getRandomValues(new Uint8Array(8)); const s = [...b].map((x) => A[x % A.length]).join(""); return s.slice(0, 4) + "-" + s.slice(4); }
+async function vCodigos(h) {
+  const m = $("#main");
+  const [{ data: cs, error }, { data: its }] = await Promise.all([
+    db.from("codigos").select("*").eq("hermandad_id", h.id).order("creado", { ascending: false }),
+    db.from("itinerarios").select("datos").eq("hermandad_id", h.id),
+  ]);
+  if (fallo(error)) return;
+  const secciones = {}; (its || []).forEach((i) => i.datos.secciones.forEach((s) => (secciones[s.id] = s.nombre)));
+  E.cache.secciones = secciones;
+  m.innerHTML = `
+    <div class="fila"><div><div class="rotulo">${esc(h.nombre)}</div><h1>Códigos de acceso</h1></div><div class="esp"></div>
+      <button class="b p" onclick="dlgCodigo()">+ Nuevo código</button></div>
+    <p class="sub">Cada fiscal activa la app con un código. Puedes hacer uno por persona o uno por sección que sirva para varios móviles.</p>
+    <div class="tarjeta" style="padding:6px 8px">
+    ${cs.length ? `<table><thead><tr><th>Código</th><th>Para</th><th>Rol</th><th>Sección</th><th>Usos</th><th>Caduca</th><th></th></tr></thead><tbody>
+    ${cs.map((c) => `<tr style="${c.activo ? "" : "opacity:.5"}">
+      <td><span class="codigo">${c.codigo}</span></td><td>${esc(c.etiqueta)}</td><td>${ROLES[c.rol] || c.rol}</td>
+      <td>${esc(secciones[c.seccion] || c.seccion || "—")}</td><td class="num">${c.usos} / ${c.usos_max}</td>
+      <td style="font-size:13px;color:var(--tinta2)">${c.caduca ? fmtFecha(c.caduca) : "—"}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <button class="b mini" onclick="copiarCodigo('${c.codigo}')">Copiar mensaje</button>
+        <button class="b mini" onclick="activarCodigo('${c.id}',${!c.activo})">${c.activo ? "Desactivar" : "Activar"}</button>
+      </td></tr>`).join("")}</tbody></table>` : `<div class="vacio">Sin códigos todavía.</div>`}
+    </div>`;
+}
+function dlgCodigo() {
+  const sec = E.cache.secciones || {};
+  abrirDialogo(`<form><h2>Nuevo código</h2><p class="sub" style="margin:6px 0 16px">Se genera solo. Compártelo por WhatsApp con quien vaya a usarlo.</p>
+    <div class="rejilla" style="grid-template-columns:1fr 1fr">
+      <label class="campo" style="grid-column:1/-1">Para quién<input name="etiqueta" required placeholder="Fiscal de cruz de guía"></label>
+      <label class="campo">Rol<select name="rol">${Object.entries(ROLES).map(([k, v]) => `<option value="${k}" ${k === "fiscal" ? "selected" : ""}>${v}</option>`).join("")}</select></label>
+      <label class="campo">Sección<select name="seccion"><option value="">Que elija</option>${Object.entries(sec).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("")}</select></label>
+      <label class="campo">Móviles que pueden usarlo<input name="usos_max" type="number" min="1" max="200" value="1"></label>
+      <label class="campo">Caduca (opcional)<input name="caduca" type="date"></label>
+    </div>
+    <div class="fila" style="margin-top:20px;justify-content:flex-end"><button type="button" class="b" data-cerrar>Cancelar</button><button class="b p">Crear</button></div></form>`,
+  async (v) => {
+    const { error } = await db.from("codigos").insert({
+      hermandad_id: E.hid, codigo: codigoAleatorio(), etiqueta: v.etiqueta, rol: v.rol, seccion: v.seccion || null,
+      usos_max: +v.usos_max || 1, caduca: v.caduca ? new Date(v.caduca + "T23:59:59").toISOString() : null,
+    });
+    if (fallo(error)) return false;
+    toast("Código creado"); pintar();
+  });
+}
+function copiarCodigo(c) {
+  const h = E.hermandades.find((x) => x.id === E.hid);
+  navigator.clipboard.writeText(`${h.nombre}: instala Compás desde Google Play y actívala con este código: ${c}`).then(() => toast("Mensaje copiado"));
+}
+async function activarCodigo(id, si) { const { error } = await db.from("codigos").update({ activo: si }).eq("id", id); if (!fallo(error)) pintar(); }
+
+// ---------------------------------------------------------------- dispositivos
+async function vDispositivos(h) {
+  const m = $("#main");
+  const [{ data: ds, error }, { data: lic }] = await Promise.all([
+    db.from("dispositivos").select("*").eq("hermandad_id", h.id).order("creado", { ascending: false }),
+    db.from("licencias").select("*").eq("hermandad_id", h.id).order("fin", { ascending: false }).limit(1),
+  ]);
+  if (fallo(error)) return;
+  const activos = ds.filter((d) => !d.revocado).length;
+  const max = lic?.[0]?.max_dispositivos;
+  m.innerHTML = `
+    <div class="fila"><div><div class="rotulo">${esc(h.nombre)}</div><h1>Móviles</h1></div></div>
+    <p class="sub">${activos}${max ? ` de ${max}` : ""} móviles activos. Si das de baja uno, deja de funcionar la próxima vez que se conecte (o como mucho a los 30 días).</p>
+    <div class="tarjeta" style="padding:6px 8px">
+    ${ds.length ? `<table><thead><tr><th>Móvil</th><th>Rol</th><th>Sección</th><th>Alta</th><th>Última conexión</th><th>Versión</th><th></th></tr></thead><tbody>
+    ${ds.map((d) => `<tr style="${d.revocado ? "opacity:.5" : ""}">
+      <td><b>${esc(d.nombre)}</b><br><span style="font-size:13px;color:var(--tinta3)">${esc(d.modelo || "")}</span></td>
+      <td>${ROLES[d.rol] || d.rol}</td><td>${esc(d.seccion || "—")}</td>
+      <td style="font-size:13px;color:var(--tinta2)">${fmtFecha(d.creado)}</td><td style="font-size:13px;color:var(--tinta2)">${fmtFecha(d.ultimo_contacto)}</td>
+      <td class="num" style="font-size:13px">${esc(d.version_app || "—")}</td>
+      <td style="text-align:right;white-space:nowrap">${d.revocado
+        ? `<button class="b mini" onclick="revocar('${d.id}',false)">Reactivar</button> <button class="b mini peligro" onclick="borrarDisp('${d.id}')">Borrar</button>`
+        : `<button class="b mini peligro" onclick="revocar('${d.id}',true)">Dar de baja</button>`}</td></tr>`).join("")}
+    </tbody></table>` : `<div class="vacio">Ningún móvil activado todavía.</div>`}</div>`;
+}
+async function revocar(id, si) { const { error } = await db.from("dispositivos").update({ revocado: si }).eq("id", id); if (!fallo(error)) pintar(); }
+async function borrarDisp(id) { if (!confirm("¿Borrar este móvil del listado?")) return; const { error } = await db.from("dispositivos").delete().eq("id", id); if (!fallo(error)) pintar(); }
+
+// ---------------------------------------------------------------- hermandad
+function vHermandad(h) {
+  $("#main").innerHTML = `
+    <div class="rotulo">${esc(h.nombre)}</div><h1>Datos de la hermandad</h1><p class="sub">Lo que ven los fiscales en la cabecera de la app.</p>
+    <form id="fh" class="tarjeta"><div class="rejilla">
+      <label class="campo" style="grid-column:1/-1">Nombre completo<input name="nombre" value="${esc(h.nombre)}" required></label>
+      <label class="campo">Nombre corto<input name="nombre_corto" value="${esc(h.nombre_corto || "")}"></label>
+      <label class="campo">Ciudad<input name="ciudad" value="${esc(h.ciudad)}"></label>
+      <label class="campo">Día de salida<input name="dia_salida" value="${esc(h.dia_salida || "")}" placeholder="Martes Santo"></label>
+      <label class="campo">Color<input name="color" type="color" value="${esc(h.color)}" style="height:40px;padding:4px"></label>
+    </div><div class="fila" style="margin-top:18px"><div class="esp"></div><button class="b p">Guardar</button></div></form>`;
+  $("#fh").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const v = Object.fromEntries(new FormData(ev.target));
+    const { error } = await db.from("hermandades").update({ ...v, nombre_corto: v.nombre_corto || null, dia_salida: v.dia_salida || null }).eq("id", h.id);
+    if (!fallo(error)) { toast("Guardado"); cargar(); }
+  });
+}
+function dlgHermandad() {
+  abrirDialogo(`<form><h2>Nueva hermandad</h2><p class="sub" style="margin:6px 0 16px">Después dale una licencia y un administrador.</p>
+    <div class="rejilla" style="grid-template-columns:1fr 1fr">
+      <label class="campo" style="grid-column:1/-1">Nombre<input name="nombre" required placeholder="Hermandad de …"></label>
+      <label class="campo">Identificador<input name="slug" required pattern="[a-z0-9-]{3,40}" placeholder="san-esteban"></label>
+      <label class="campo">Ciudad<input name="ciudad" value="Sevilla"></label>
+      <label class="campo">Día de salida<input name="dia_salida" placeholder="Martes Santo"></label>
+      <label class="campo">Cuenta interna<select name="interna"><option value="false">No</option><option value="true">Sí (pruebas)</option></select></label>
+    </div>
+    <div class="fila" style="margin-top:20px;justify-content:flex-end"><button type="button" class="b" data-cerrar>Cancelar</button><button class="b p">Crear</button></div></form>`,
+  async (v) => {
+    const { data, error } = await db.from("hermandades").insert({ ...v, interna: v.interna === "true", dia_salida: v.dia_salida || null }).select("id").single();
+    if (fallo(error)) return false;
+    E.hid = data.id; E.vista = "licencias"; toast("Hermandad creada. Ahora dale una licencia."); cargar();
+  });
+}
+
+// ---------------------------------------------------------------- licencias (superadmin)
+async function vLicencias(h) {
+  const { data: ls, error } = await db.from("licencias").select("*").eq("hermandad_id", h.id).order("fin", { ascending: false });
+  if (fallo(error)) return;
+  const hoy = new Date().toISOString().slice(0, 10);
+  $("#main").innerHTML = `
+    <div class="fila"><div><div class="rotulo">${esc(h.nombre)}</div><h1>Licencias</h1></div><div class="esp"></div><button class="b p" onclick="dlgLicencia()">+ Nueva licencia</button></div>
+    <p class="sub">Vale la que esté activa y en fechas. Los móviles renuevan su permiso cada vez que sincronizan; sin licencia, dejan de poder salir en vivo como mucho 30 días después.</p>
+    <div class="tarjeta" style="padding:6px 8px">${ls.length ? `<table><thead><tr><th>Desde</th><th>Hasta</th><th>Móviles</th><th>Estado</th><th>Notas</th><th></th></tr></thead><tbody>
+    ${ls.map((l) => { const vig = l.estado === "activa" && l.inicio <= hoy && l.fin >= hoy; return `<tr>
+      <td class="num">${l.inicio}</td><td class="num">${l.fin}</td><td class="num">${l.max_dispositivos}</td>
+      <td>${vig ? `<span class="pastilla" style="--c:var(--bien)">Vigente</span>` : l.estado === "suspendida" ? `<span class="pastilla" style="--c:var(--mal)">Suspendida</span>` : `<span class="pastilla">Fuera de fechas</span>`}</td>
+      <td style="color:var(--tinta2)">${esc(l.notas || "")}</td>
+      <td style="text-align:right"><button class="b mini" onclick="suspender('${l.id}','${l.estado === "activa" ? "suspendida" : "activa"}')">${l.estado === "activa" ? "Suspender" : "Reactivar"}</button></td></tr>`; }).join("")}
+    </tbody></table>` : `<div class="vacio">Sin licencia: los móviles no podrán activarse.</div>`}</div>`;
+}
+function dlgLicencia() {
+  const hoy = new Date(); const fin = new Date(hoy.getFullYear() + 1, 5, 30);
+  abrirDialogo(`<form><h2>Nueva licencia</h2>
+    <div class="rejilla" style="grid-template-columns:1fr 1fr;margin-top:16px">
+      <label class="campo">Desde<input name="inicio" type="date" required value="${hoy.toISOString().slice(0, 10)}"></label>
+      <label class="campo">Hasta<input name="fin" type="date" required value="${fin.toISOString().slice(0, 10)}"></label>
+      <label class="campo">Móviles<input name="max_dispositivos" type="number" min="1" max="500" value="15"></label>
+      <label class="campo">Notas<input name="notas" placeholder="Factura 2027-004"></label>
+    </div>
+    <div class="fila" style="margin-top:20px;justify-content:flex-end"><button type="button" class="b" data-cerrar>Cancelar</button><button class="b p">Crear</button></div></form>`,
+  async (v) => { const { error } = await db.from("licencias").insert({ ...v, hermandad_id: E.hid, max_dispositivos: +v.max_dispositivos }); if (fallo(error)) return false; toast("Licencia creada"); pintar(); });
+}
+async function suspender(id, estado) { const { error } = await db.from("licencias").update({ estado }).eq("id", id); if (!fallo(error)) pintar(); }
+
+// ---------------------------------------------------------------- administradores (superadmin)
+async function vAdmins(h) {
+  const { data: as, error } = await db.from("admins").select("*").eq("hermandad_id", h.id).order("creado");
+  if (fallo(error)) return;
+  $("#main").innerHTML = `
+    <div class="fila"><div><div class="rotulo">${esc(h.nombre)}</div><h1>Administradores</h1></div><div class="esp"></div><button class="b p" onclick="dlgAdmin()">+ Añadir</button></div>
+    <p class="sub">Pueden entrar en este panel con su correo y gestionar itinerarios, códigos y móviles de esta hermandad.</p>
+    <div class="tarjeta" style="padding:6px 8px">${as.length ? `<table><thead><tr><th>Correo</th><th>Nombre</th><th>Desde</th><th></th></tr></thead><tbody>
+    ${as.map((a) => `<tr><td>${esc(a.email)}</td><td>${esc(a.nombre || "")}</td><td style="font-size:13px;color:var(--tinta2)">${fmtFecha(a.creado)}</td>
+      <td style="text-align:right"><button class="b mini peligro" onclick="quitarAdmin('${esc(a.email)}')">Quitar</button></td></tr>`).join("")}
+    </tbody></table>` : `<div class="vacio">Nadie todavía.</div>`}</div>`;
+}
+function dlgAdmin() {
+  abrirDialogo(`<form><h2>Añadir administrador</h2>
+    <div class="rejilla" style="grid-template-columns:1fr;margin-top:16px">
+      <label class="campo">Correo<input name="email" type="email" required></label>
+      <label class="campo">Nombre<input name="nombre" placeholder="Diputado Mayor de Gobierno"></label>
+    </div>
+    <div class="fila" style="margin-top:20px;justify-content:flex-end"><button type="button" class="b" data-cerrar>Cancelar</button><button class="b p">Añadir</button></div></form>`,
+  async (v) => { const { error } = await db.from("admins").insert({ hermandad_id: E.hid, email: v.email.trim().toLowerCase(), nombre: v.nombre || null }); if (fallo(error)) return false; toast("Añadido. Ya puede entrar con su correo."); pintar(); });
+}
+async function quitarAdmin(email) { if (!confirm(`¿Quitar a ${email}?`)) return; const { error } = await db.from("admins").delete().eq("hermandad_id", E.hid).eq("email", email); if (!fallo(error)) pintar(); }
+
+iniciar();
+</script>
+</body>
+</html>
