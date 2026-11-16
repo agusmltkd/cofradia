@@ -4,7 +4,8 @@ Genera todos los iconos de Statio a partir de una sola definición.
     python3 marca/generar.py        (necesita: pip install cairosvg)
 
 El símbolo: una S hecha de paradas (el recorrido) que termina en el punto
-de horario fijo (rombo dorado), con una cruz dorada tenue detrás.
+de horario fijo (rombo dorado). Hay una variante con cruz detrás (CON_CRUZ),
+probada y descartada; se deja apagada por si se quiere recuperar.
 Coordenadas en una caja de 108 x 108 (la del icono adaptativo de Android).
 """
 import json
@@ -16,7 +17,9 @@ P = json.loads((RAIZ / "marca" / "puntos.json").read_text())
 TINTA, ORO, FONDO_ICONO, FONDO_OSCURO = "#F1ECE2", "#D8A24A", "#1B1A17", "#0E0E0D"
 TINTA_CLARA, ORO_CLARO = "#1B1A17", "#9C6A17"
 
-# Cruz: palo de y=22 a y=91, brazo de 38 de ancho a la altura y=39, grosor 4, 62 % de opacidad.
+CON_CRUZ = False
+
+# Cruz (solo si CON_CRUZ): palo de y=22 a y=91, brazo de 38 de ancho a la altura y=39, grosor 4, 62 % de opacidad.
 CRUZ = dict(cx=54, top=22, bot=91, brazo_y=39, ancho=38, w=4, opacidad=0.62)
 R_PRIMERO, R_PUNTO, ROMBO = 4.8, 3.4, 7.6
 
@@ -42,7 +45,8 @@ def cruz_rects():
 
 
 # ---------------------------------------------------------------- SVG
-def svg_simbolo(tinta=TINTA, oro=ORO, cruz=True, fondo=None, rx=24, escala=1.0):
+def svg_simbolo(tinta=TINTA, oro=ORO, cruz=None, fondo=None, rx=24, escala=1.0):
+    cruz = CON_CRUZ if cruz is None else cruz
     partes = []
     if fondo:
         partes.append(f'<rect width="108" height="108" rx="{rx}" fill="{fondo}"/>')
@@ -60,7 +64,8 @@ def svg_simbolo(tinta=TINTA, oro=ORO, cruz=True, fondo=None, rx=24, escala=1.0):
 
 
 # ---------------------------------------------------------------- Android
-def vector(tinta, oro, cruz=True, ancho=108, alto=108, vw=108, vh=108, tx=0, ty=0, alfa_cruz=None):
+def vector(tinta, oro, cruz=None, ancho=108, alto=108, vw=108, vh=108, tx=0, ty=0, alfa_cruz=None):
+    cruz = CON_CRUZ if cruz is None else cruz
     alfa = CRUZ["opacidad"] if alfa_cruz is None else alfa_cruz
     lineas = []
     if cruz:
@@ -71,7 +76,7 @@ def vector(tinta, oro, cruz=True, ancho=108, alto=108, vw=108, vh=108, tx=0, ty=
     lineas.append(f'        <path android:fillColor="{oro}" android:pathData="{rombo_d(*P[-1])}" />')
     return (
         '<?xml version="1.0" encoding="utf-8"?>\n'
-        "<!-- Statio: S de paradas con cruz detrás. Generado por marca/generar.py; no editar a mano. -->\n"
+        "<!-- Statio: S de paradas hasta el punto fijo. Generado por marca/generar.py; no editar a mano. -->\n"
         '<vector xmlns:android="http://schemas.android.com/apk/res/android"\n'
         f'    android:width="{ancho}dp" android:height="{alto}dp" android:viewportWidth="{vw}" android:viewportHeight="{vh}">\n'
         f'    <group android:translateX="{tx}" android:translateY="{ty}">\n' + "\n".join(lineas) + "\n    </group>\n</vector>\n"

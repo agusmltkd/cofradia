@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Statio: S de paradas con cruz detrás. Generado por marca/generar.py; no editar a mano. -->
+<!-- Statio: S de paradas hasta el punto fijo. Generado por marca/generar.py; no editar a mano. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp" android:height="24dp" android:viewportWidth="58" android:viewportHeight="58">
     <group android:translateX="-25" android:translateY="-27">
